@@ -2,8 +2,11 @@
 <html lang="th" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LDC14 Wallet - LDC 14th Generation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LDC Wallet - The 14th Generation of LDC</title>
+    
+    <!-- SVG Favicon: Pink Heart on Gold Background -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23D4AF37'/><path d='M50 78 C 30 62 18 48 18 34 C 18 22 27 15 38 15 C 44 15 48 18 50 22 C 52 18 56 15 62 15 C 73 15 82 22 82 34 C 82 48 70 62 50 78 Z' fill='%238E3C77'/></svg>">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,9 +19,10 @@
                         brand: {
                             pink: '#8E3C77',
                             pinkLight: '#B04F95',
-                            pinkDark: '#5A234B',
+                            pinkDark: '#4A1C3E',
+                            pinkGloss: '#A2488A',
                             gold: '#D4AF37',
-                            goldLight: '#F3E5AB',
+                            goldLight: '#F5E4A0',
                             goldDark: '#997A15'
                         }
                     },
@@ -33,76 +37,58 @@
     <!-- Google Fonts & FontAwesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Cropper.js CSS & JS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-    <!-- Custom Glassmorphic Styles -->
+    <!-- Bank App Styled Custom CSS -->
     <style>
         body {
             font-family: 'Prompt', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        /* Banking Card Gradient & Glassmorphism */
+        .bank-card {
+            background: linear-gradient(135deg, #8E3C77 0%, #5A234B 50%, #2D1026 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -15px rgba(142, 60, 119, 0.5);
         }
 
-        .dark .glass-panel {
-            background: rgba(15, 23, 42, 0.55);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .bank-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, transparent 60%);
+            pointer-events: none;
         }
 
-        .glass-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+        .glass-banking {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .dark .glass-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.3));
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-top: 1px solid rgba(255, 255, 255, 0.5);
-        }
-
-        .dark .glass-nav {
+        .dark .glass-banking {
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .ambient-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: 0;
-            animation: pulseOrb 10s infinite alternate ease-in-out;
-        }
-
-        @keyframes pulseOrb {
-            0% { transform: scale(1) translate(0, 0); }
-            100% { transform: scale(1.15) translate(20px, -20px); }
+        /* Keypad press animation */
+        .keypad-btn:active {
+            transform: scale(0.92);
+            background-color: rgba(142, 60, 119, 0.2);
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -112,75 +98,80 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* Soft Pulse for Status Badge */
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse-live {
+            animation: statusPulse 2s infinite ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-500 overflow-x-hidden">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 overflow-x-hidden flex justify-center items-center p-0 md:p-4">
 
-    <!-- Ambient Lighting Orbs -->
-    <div class="ambient-orb w-96 h-96 -top-20 -left-20 bg-brand-pink/30 dark:bg-brand-pink/20"></div>
-    <div class="ambient-orb w-[30rem] h-[30rem] -bottom-32 -right-32 bg-brand-gold/20 dark:bg-brand-gold/10" style="animation-delay: 3s;"></div>
-    <div class="ambient-orb w-80 h-80 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-pink-400/20 dark:bg-purple-900/10" style="animation-delay: 5s;"></div>
-
-    <div id="app" class="relative z-10 flex flex-col min-h-screen max-w-md md:max-w-4xl mx-auto px-4 pb-24 md:pb-6">
+    <!-- Mobile Screen Frame Container -->
+    <div id="app" class="relative z-10 w-full max-w-md min-h-screen md:min-h-[844px] md:max-h-[900px] md:rounded-[40px] md:shadow-2xl md:border-4 md:border-slate-800 dark:md:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col overflow-hidden">
         
-        <!-- Top Navigation Header (Hidden before login) -->
-        <header id="topHeader" class="hidden sticky top-4 z-40 my-4">
-            <div class="glass-panel rounded-3xl px-5 py-3.5 flex items-center justify-between shadow-xl">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-pink to-brand-gold flex items-center justify-center text-white shadow-lg shadow-brand-pink/30 font-bold text-lg">
-                        <i class="fa-solid fa-wallet"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-lg leading-none bg-gradient-to-r from-brand-pink to-brand-gold bg-clip-text text-transparent">
-                            LDC14 Wallet
-                        </h1>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase mt-0.5">
-                            LDC 14th Generation
-                        </p>
-                    </div>
+        <!-- Top Status/App Header -->
+        <header id="topHeader" class="sticky top-0 z-40 px-5 py-3.5 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <!-- Brand Logo: Pink Heart on Gold Rounded Box -->
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-brand-gold via-brand-goldLight to-yellow-300 flex items-center justify-center text-brand-pink shadow-md shadow-brand-gold/30 font-extrabold text-base border border-amber-200/50">
+                    <i class="fa-solid fa-heart text-brand-pink"></i>
                 </div>
+                <div>
+                    <h1 class="font-extrabold text-base tracking-tight leading-none bg-gradient-to-r from-brand-pink via-brand-pinkLight to-brand-gold bg-clip-text text-transparent">
+                        LDC Wallet
+                    </h1>
+                    <p class="text-[9px] text-slate-500 dark:text-slate-400 font-semibold tracking-widest uppercase mt-0.5">
+                        The 14th Generation of LDC
+                    </p>
+                </div>
+            </div>
 
-                <div class="flex items-center gap-2">
-                    <button onclick="toggleLang()" class="px-3 py-1.5 rounded-xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-globe text-brand-pink"></i>
-                        <span id="langLabel">TH</span>
-                    </button>
-                    <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-slate-700 dark:text-slate-300 transition-all shadow-sm">
-                        <i id="themeIcon" class="fa-solid fa-moon"></i>
-                    </button>
-                    <button id="logoutBtn" onclick="logout()" class="hidden p-2.5 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border border-rose-500/20 transition-all shadow-sm" title="Log Out">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
+            <!-- Header Controls -->
+            <div class="flex items-center gap-1.5">
+                <button onclick="toggleLang()" class="px-2.5 py-1 rounded-xl bg-slate-200/60 dark:bg-slate-800/60 hover:bg-slate-300 dark:hover:bg-slate-700 text-[11px] font-bold transition-all flex items-center gap-1">
+                    <i class="fa-solid fa-globe text-brand-pink"></i>
+                    <span id="langLabel">TH</span>
+                </button>
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-xl bg-slate-200/60 dark:bg-slate-800/60 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all flex items-center justify-center">
+                    <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
+                </button>
+                <button id="logoutBtn" onclick="logout()" class="hidden w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-all flex items-center justify-center" title="Log Out">
+                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                </button>
             </div>
         </header>
 
-        <!-- Main Dynamic Content Container -->
-        <main id="mainContainer" class="flex-1 w-full space-y-6">
-            <!-- Rendered by JS -->
+        <!-- Main Dynamic Viewport -->
+        <main id="mainContainer" class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-5 pb-24">
+            <!-- Rendered via JS -->
         </main>
 
-        <!-- Bottom Navigation -->
-        <nav id="bottomNav" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md">
-            <div class="glass-nav rounded-full p-2 shadow-2xl flex items-center justify-around border border-white/40 dark:border-white/10">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
-                    <i class="fa-solid fa-house text-base"></i>
+        <!-- Floating Banking Navigation Bar -->
+        <nav id="bottomNav" class="hidden fixed md:absolute bottom-3 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-[360px]">
+            <div class="glass-banking rounded-full p-2 shadow-2xl flex items-center justify-around border border-white/40 dark:border-white/10">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-400">
+                    <i class="fa-solid fa-house-crack text-base"></i>
                     <span class="text-[10px] font-medium" data-i18n="dashboard">หน้าหลัก</span>
                 </button>
-                <button onclick="switchTab('expenses')" id="nav-expenses" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
+                <button onclick="switchTab('expenses')" id="nav-expenses" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-400">
                     <i class="fa-solid fa-receipt text-base"></i>
-                    <span class="text-[10px] font-medium" data-i18n="expenses">ค่าใช้จ่าย</span>
+                    <span class="text-[10px] font-medium" data-i18n="expenses">เบิกจ่าย</span>
                 </button>
-                <button onclick="switchTab('approvals')" id="nav-approvals" class="nav-btn hidden flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
-                    <i class="fa-solid fa-clipboard-check text-base"></i>
+                <button onclick="switchTab('approvals')" id="nav-approvals" class="nav-btn hidden flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-400">
+                    <i class="fa-solid fa-stamp text-base"></i>
                     <span class="text-[10px] font-medium" data-i18n="approvals">อนุมัติ</span>
                 </button>
-                <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn hidden flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
-                    <i class="fa-solid fa-shield-halved text-base"></i>
+                <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn hidden flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-400">
+                    <i class="fa-solid fa-user-gear text-base"></i>
                     <span class="text-[10px] font-medium" data-i18n="admin">ผู้ดูแล</span>
                 </button>
-                <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
-                    <i class="fa-solid fa-user text-base"></i>
+                <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-400">
+                    <i class="fa-solid fa-circle-user text-base"></i>
                     <span class="text-[10px] font-medium" data-i18n="profile">โปรไฟล์</span>
                 </button>
             </div>
@@ -188,208 +179,194 @@
     </div>
 
     <!-- Toast Notification Banner -->
-    <div id="toast" class="fixed top-20 right-4 z-50 transition-all duration-300 transform translate-x-full opacity-0">
-        <div id="toastContent" class="px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-sm font-medium flex items-center gap-2">
-            <i id="toastIcon" class="fa-solid fa-circle-check"></i>
+    <div id="toast" class="fixed top-5 right-5 z-50 transition-all duration-300 transform translate-x-full opacity-0">
+        <div id="toastContent" class="px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-xs font-semibold flex items-center gap-2">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-base"></i>
             <span id="toastMsg">ดำเนินการสำเร็จ</span>
         </div>
     </div>
 
-    <!-- Image Crop Modal (1:1 Aspect Ratio) -->
-    <div id="cropModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-        <div class="glass-panel rounded-3xl p-6 max-w-lg w-full max-h-[90vh] flex flex-col gap-4 shadow-2xl relative overflow-hidden">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-                <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+    <!-- Image Crop Modal (1:1) -->
+    <div id="cropModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div class="glass-banking rounded-3xl p-5 max-w-sm w-full flex flex-col gap-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="font-bold text-sm flex items-center gap-2">
                     <i class="fa-solid fa-crop-simple text-brand-pink"></i> ครอปรูปโปรไฟล์ (1:1)
                 </h3>
-                <button onclick="closeCropModal()" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button onclick="closeCropModal()" class="w-7 h-7 rounded-full bg-slate-200/50 dark:bg-slate-800/50 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
             </div>
-
-            <div class="flex-1 overflow-hidden flex items-center justify-center bg-slate-950/60 rounded-2xl p-2 border border-black/10 dark:border-white/10 min-h-[300px] max-h-[50vh]">
+            <div class="overflow-hidden flex items-center justify-center bg-slate-950/80 rounded-2xl p-2 min-h-[240px] max-h-[40vh]">
                 <img id="cropModalImg" src="" alt="Crop Source" class="max-w-full max-h-full block" />
             </div>
-
-            <div class="flex gap-3 pt-2">
-                <button onclick="closeCropModal()" class="flex-1 px-4 py-2.5 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/20 font-medium text-sm transition-all">
-                    ยกเลิก
-                </button>
-                <button onclick="applyCropImage()" class="flex-1 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-medium text-sm flex items-center justify-center gap-2 transition-all shadow-md">
-                    <i class="fa-solid fa-check"></i> บันทึกรูปภาพ
-                </button>
+            <div class="flex gap-2">
+                <button onclick="closeCropModal()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-semibold">ยกเลิก</button>
+                <button onclick="applyCropImage()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-semibold text-xs shadow-md">บันทึกรูปภาพ</button>
             </div>
         </div>
     </div>
 
     <!-- Proof Modal Viewer -->
-    <div id="proofModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300">
-        <div class="glass-panel rounded-3xl p-6 max-w-lg w-full max-h-[90vh] flex flex-col gap-4 shadow-2xl relative overflow-hidden">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+    <div id="proofModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div class="glass-banking rounded-3xl p-5 max-w-sm w-full flex flex-col gap-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
                 <div>
-                    <h3 id="modalTitle" class="font-bold text-lg text-slate-900 dark:text-white">หลักฐานการทำรายการ</h3>
-                    <p id="modalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+                    <h3 id="modalTitle" class="font-bold text-sm">หลักฐานการทำรายการ</h3>
+                    <p id="modalSubtitle" class="text-[10px] text-slate-500 dark:text-slate-400"></p>
                 </div>
-                <button onclick="closeProofModal()" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button onclick="closeProofModal()" class="w-7 h-7 rounded-full bg-slate-200/50 dark:bg-slate-800/50 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
             </div>
-
-            <div class="flex-1 overflow-auto flex items-center justify-center bg-slate-950/40 rounded-2xl p-2 border border-black/10 dark:border-white/10 min-h-[250px]">
-                <img id="modalImg" src="" alt="Proof Document" class="max-h-[55vh] w-auto object-contain rounded-xl shadow-md" />
+            <div class="overflow-auto flex items-center justify-center bg-slate-950/60 rounded-2xl p-2 min-h-[220px]">
+                <img id="modalImg" src="" alt="Proof Document" class="max-h-[45vh] w-auto object-contain rounded-xl shadow-md" />
             </div>
-
-            <div class="flex gap-3 pt-2">
-                <button onclick="downloadProof()" class="flex-1 px-4 py-2.5 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/20 font-medium text-sm flex items-center justify-center gap-2 transition-all">
-                    <i class="fa-solid fa-download text-brand-pink"></i> <span data-i18n="download">ดาวน์โหลดสลิป</span>
+            <div class="flex gap-2">
+                <button onclick="downloadProof()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-semibold flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-download text-brand-pink"></i> ดาวน์โหลดสลิป
                 </button>
-                <button onclick="closeProofModal()" class="flex-1 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-medium text-sm flex items-center justify-center gap-2 transition-all shadow-md">
-                    <span data-i18n="close">ปิดหน้าต่าง</span>
-                </button>
+                <button onclick="closeProofModal()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-semibold text-xs">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>
 
-    <!-- Application Script -->
-    <script>
+    <!-- Main Logic Script -->
+        <script>
         const dict = {
             th: {
-                loginTitle: "LDC14 Wallet",
-                loginSubtitle: "เข้าสู่ระบบด้วยบัญชีมหาวิทยาลัยกรุงเทพ (@bumail.net / @bu.ac.th)",
-                emailInputLabel: "อีเมลมหาวิทยาลัยกรุงเทพ",
-                passwordInputLabel: "รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)",
-                loginTabBtn: "เข้าสู่ระบบ",
+                bankWelcome: "ยินดีต้อนรับสู่ LDC Wallet",
+                enterStudentId: "กรุณากรอกเลขประจำตัว 10 หลัก",
+                studentIdLabel: "เลขประจำตัวนักศึกษา (10 หลัก)",
+                buEmailLabel: "อีเมลมหาวิทยาลัยกรุงเทพ",
+                loginSubmitBtn: "เข้าสู่ระบบด้วย PIN 10 หลัก",
                 registerTabBtn: "ลงทะเบียนใหม่",
-                loginSubmitBtn: "เข้าสู่ระบบ",
-                registerSubmitBtn: "ถัดไป (ตั้งค่าโปรไฟล์)",
+                biometricsBtn: "สแกน Touch ID / Face ID",
                 onboardingTitle: "ลงทะเบียนสมาชิก LDC14",
                 name: "ชื่อจริง",
                 surname: "นามสกุล",
                 nickname: "ชื่อเล่น",
-                studentId: "รหัสนักศึกษา (บังคับ 10 หลัก)",
-                photoUrl: "รูปโปรไฟล์ (ครอปอัตราส่วน 1:1)",
+                studentId: "รหัสนักศึกษา (10 หลัก)",
+                photoUrl: "รูปโปรไฟล์ (อัตราส่วน 1:1)",
                 saveProfile: "บันทึกข้อมูลส่วนตัว",
                 dashboard: "หน้าหลัก",
-                expenses: "ค่าใช้จ่าย",
+                expenses: "เบิกจ่าย",
                 approvals: "อนุมัติ",
                 admin: "ผู้ดูแล",
                 profile: "โปรไฟล์",
-                totalBalance: "งบกองกลางปัจจุบัน",
-                totalExpenses: "ค่าใช้จ่ายทั้งหมด",
-                addFunds: "แจ้งโอนเงินเข้ากองกลาง",
+                totalBalance: "งบกองกลาง LDC Vault",
+                totalExpenses: "เบิกจ่ายสะสม",
+                addFunds: "เติมเงิน/โอนเข้า",
                 amount: "จำนวนเงิน (บาท)",
-                slipUrl: "สลิปโอนเงิน (อัปโหลดรูป)",
+                slipUrl: "อัปโหลดสลิปการโอนเงิน",
                 submit: "ยืนยันการทำรายการ",
                 cancel: "ยกเลิก",
                 pending: "รออนุมัติ",
-                approved: "อนุมัติแล้ว",
+                approved: "สำเร็จ",
                 rejected: "ปฏิเสธ",
-                requestReimbursement: "ขอเบิกค่าใช้จ่าย",
-                reason: "ชื่องาน / เหตุผลการเบิกจ่าย",
-                uploadProof: "อัปโหลดหลักฐานการจ่าย",
+                requestReimbursement: "ยื่นขอเบิกจ่าย",
+                reason: "รายการ / ชื่องานเบิกจ่าย",
+                uploadProof: "อัปโหลดใบเสร็จ",
                 approve: "อนุมัติ",
                 reject: "ปฏิเสธ",
-                history: "ประวัติการชำระเงินส่วนตัว",
-                contributions: "ยอดเงินโอนเข้าทั้งหมด",
-                refunds: "ยอดเงินคืนทั้งหมด",
-                manageRoles: "จัดการตำแหน่งและสิทธิ์สมาชิก",
+                history: "ประวัติการทำรายการส่วนตัว",
+                contributions: "ยอดเงินโอนเข้าสะสม",
+                refunds: "ยอดเงินรับคืนสะสม",
+                manageRoles: "จัดการสิทธิ์สมาชิก",
                 treasurer: "เหรัญญิก",
                 member: "สมาชิก",
                 issueRefund: "คืนเงินให้สมาชิก",
                 success: "ดำเนินการสำเร็จ",
                 error: "เกิดข้อผิดพลาด",
-                require10Digits: "รหัสนักศึกษาต้องเป็นตัวเลข 10 หลักเท่านั้น",
-                requireBUEmail: "ต้องใช้อีเมลมหาวิทยาลัยกรุงเทพเท่านั้น (@bumail.net หรือ @bu.ac.th)",
-                invalidPassword: "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษรตามสากล",
+                require10Digits: "เลขประจำตัวต้องมี 10 หลักเท่านั้น",
+                requireBUEmail: "ต้องใช้อีเมลมหาวิทยาลัยกรุงเทพ (@bumail.net หรือ @bu.ac.th)",
                 userNotFound: "ไม่พบบัญชีนี้ กรุณาลงทะเบียนใหม่",
-                wrongPassword: "รหัสผ่านไม่ถูกต้อง",
-                emailExists: "อีเมลนี้ถูกลงทะเบียนไว้แล้ว กรุณาเข้าสู่ระบบ",
+                emailExists: "อีเมลนี้ลงทะเบียนแล้ว กรุณาล็อกอิน",
                 deposit: "ฝากเงินกองกลาง",
-                expense: "เบิกค่าใช้จ่าย",
+                expense: "เบิกจ่ายกองกลาง",
                 refund: "รับเงินคืน",
-                uploadImage: "คลิกเพื่ออัปโหลดรูปภาพ",
-                refundSlipUrl: "สลิปคืนเงิน (อัปโหลดรูปภาพ)",
-                movementHistory: "ประวัติการเคลื่อนไหวเงินกองกลาง",
-                noActivity: "ยังไม่มีประวัติการทำรายการ",
-                pendingDeposits: "คำขอเงินเข้ากองกลาง (ฝากเงิน)",
-                pendingExpenses: "คำขอเงินออกกองกลาง (เบิกจ่าย)",
-                viewProof: "ดูหลักฐาน",
+                uploadImage: "แตะเพื่ออัปโหลดรูปภาพ",
+                refundSlipUrl: "อัปโหลดสลิปคืนเงิน",
+                movementHistory: "ประวัติธุรกรรมล่าสุด",
+                noActivity: "ยังไม่มีรายการธุรกรรม",
+                pendingDeposits: "รายการฝากเงินรออนุมัติ",
+                pendingExpenses: "รายการเบิกจ่ายรออนุมัติ",
+                viewProof: "ดูสลิป",
                 proofTitle: "หลักฐานการทำรายการ",
-                download: "ดาวน์โหลดสลิป",
-                close: "ปิดหน้าต่าง",
                 editProfile: "แก้ไขโปรไฟล์",
-                editProfileTitle: "ปรับแต่งข้อมูลโปรไฟล์",
+                editProfileTitle: "แก้ไขข้อมูลส่วนตัว",
                 targetMember: "เลือกสมาชิกที่ต้องการคืนเงิน",
-                registeredMembers: "รายชื่อสมาชิกทั้งหมดที่ลงทะเบียนแล้ว"
+                registeredMembers: "รายชื่อสมาชิกในระบบ",
+                hideBalance: "ซ่อนยอดเงิน",
+                showBalance: "แสดงยอดเงิน",
+                quickActions: "เมนูด่วน"
             },
             en: {
-                loginTitle: "LDC14 Wallet",
-                loginSubtitle: "Sign in with Bangkok University account (@bumail.net / @bu.ac.th)",
-                emailInputLabel: "Bangkok University Email",
-                passwordInputLabel: "Password (Min 8 characters)",
-                loginTabBtn: "Sign In",
-                registerTabBtn: "Register",
-                loginSubmitBtn: "Sign In",
-                registerSubmitBtn: "Next (Profile Setup)",
-                onboardingTitle: "LDC14 Registration",
+                bankWelcome: "Welcome to LDC Wallet",
+                enterStudentId: "Enter your 10-Digit Student ID",
+                studentIdLabel: "Student ID (10 Digits)",
+                buEmailLabel: "BU Institutional Email",
+                loginSubmitBtn: "Sign In with 10-Digit ID",
+                registerTabBtn: "Register Account",
+                biometricsBtn: "Use Touch ID / Face ID",
+                onboardingTitle: "LDC14 Member Registration",
                 name: "First Name",
                 surname: "Last Name",
                 nickname: "Nickname",
-                studentId: "Student ID (10 digits required)",
-                photoUrl: "Profile Picture (1:1 Cropped)",
-                saveProfile: "Save Profile Information",
-                dashboard: "Dashboard",
+                studentId: "Student ID (10 Digits)",
+                photoUrl: "Profile Picture (1:1)",
+                saveProfile: "Save Profile",
+                dashboard: "Home",
                 expenses: "Expenses",
                 approvals: "Approvals",
                 admin: "Admin",
                 profile: "Profile",
-                totalBalance: "Current Total Fund",
-                totalExpenses: "Total Expenses Payout",
-                addFunds: "Deposit to Fund",
+                totalBalance: "LDC Central Fund",
+                totalExpenses: "Total Expenses",
+                addFunds: "Deposit",
                 amount: "Amount (THB)",
-                slipUrl: "Transfer Slip (Upload)",
+                slipUrl: "Upload Transfer Slip",
                 submit: "Submit Transaction",
                 cancel: "Cancel",
                 pending: "Pending",
-                approved: "Approved",
+                approved: "Success",
                 rejected: "Rejected",
-                requestReimbursement: "Request Reimbursement",
-                reason: "Event Title / Reason",
-                uploadProof: "Upload Receipt Proof",
+                requestReimbursement: "Claim Expense",
+                reason: "Title / Description",
+                uploadProof: "Upload Receipt",
                 approve: "Approve",
                 reject: "Reject",
-                history: "Personal Payment History",
-                contributions: "Total Contributions",
-                refunds: "Total Refunds Received",
-                manageRoles: "Manage Roles & Member Directory",
+                history: "Personal Activity Log",
+                contributions: "Total Deposits",
+                refunds: "Total Refunds",
+                manageRoles: "Role Management",
                 treasurer: "Treasurer",
                 member: "Member",
-                issueRefund: "Issue Member Refund",
+                issueRefund: "Issue Refund",
                 success: "Operation Successful",
-                error: "An error occurred",
+                error: "Error Occurred",
                 require10Digits: "Student ID must be exactly 10 digits",
-                requireBUEmail: "Must use a valid BU Email (@bumail.net or @bu.ac.th)",
-                invalidPassword: "Password must be at least 8 characters long",
+                requireBUEmail: "Must use @bumail.net or @bu.ac.th",
                 userNotFound: "Account not found. Please register.",
-                wrongPassword: "Incorrect password",
-                emailExists: "Email already registered. Please sign in.",
-                deposit: "Fund Deposit",
-                expense: "Fund Expense",
+                emailExists: "Email already exists. Please login.",
+                deposit: "Deposit",
+                expense: "Expense Claim",
                 refund: "Fund Refund",
-                uploadImage: "Click to upload image",
-                refundSlipUrl: "Refund Slip (Upload Image)",
-                movementHistory: "Central Fund Activity Log",
-                noActivity: "No recent financial activity",
-                pendingDeposits: "Pending Deposit Requests",
-                pendingExpenses: "Pending Expense Claims",
-                viewProof: "View Proof",
-                proofTitle: "Transaction Slip & Proof",
-                download: "Download Slip",
-                close: "Close Window",
+                uploadImage: "Tap to Upload Image",
+                refundSlipUrl: "Upload Refund Slip",
+                movementHistory: "Recent Transactions",
+                noActivity: "No transaction records",
+                pendingDeposits: "Pending Deposits",
+                pendingExpenses: "Pending Expenses",
+                viewProof: "View Slip",
+                proofTitle: "Transaction Slip",
                 editProfile: "Edit Profile",
-                editProfileTitle: "Edit Profile Information",
+                editProfileTitle: "Edit Profile Details",
                 targetMember: "Select Member for Refund",
-                registeredMembers: "Registered Members Directory"
+                registeredMembers: "Registered Members Directory",
+                hideBalance: "Hide Balance",
+                showBalance: "Show Balance",
+                quickActions: "Quick Services"
             }
         };
 
@@ -399,9 +376,12 @@
             currentUser: null,
             users: [],
             transactions: [],
-            activeTab: 'dashboard'
+            activeTab: 'dashboard',
+            hideBalance: false,
+            enteredPin: ''
         };
 
+        // Initialize Local Storage
         function initData() {
             const savedUsers = localStorage.getItem('ldc14_users');
             const savedTrans = localStorage.getItem('ldc14_transactions');
@@ -437,13 +417,18 @@
             if (state.theme === 'dark') {
                 icon.className = 'fa-solid fa-sun text-brand-gold';
             } else {
-                icon.className = 'fa-solid fa-moon text-[#8E3C77]';
+                icon.className = 'fa-solid fa-moon text-brand-pink';
             }
         }
 
         function toggleLang() {
             state.lang = state.lang === 'th' ? 'en' : 'th';
             document.getElementById('langLabel').innerText = state.lang.toUpperCase();
+            render();
+        }
+
+        function toggleBalanceVisibility() {
+            state.hideBalance = !state.hideBalance;
             render();
         }
 
@@ -457,11 +442,11 @@
 
             toastMsg.innerText = msg;
             if (type === 'error') {
-                toastContent.className = "px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-sm font-medium flex items-center gap-2 bg-rose-500/20 border-rose-500/30 text-rose-600 dark:text-rose-300";
-                toastIcon.className = "fa-solid fa-circle-xmark";
+                toastContent.className = "px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-xs font-semibold flex items-center gap-2 bg-rose-500/20 border-rose-500/30 text-rose-600 dark:text-rose-300";
+                toastIcon.className = "fa-solid fa-circle-xmark text-base";
             } else {
-                toastContent.className = "px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-sm font-medium flex items-center gap-2 bg-emerald-500/20 border-emerald-500/30 text-emerald-600 dark:text-emerald-300";
-                toastIcon.className = "fa-solid fa-circle-check";
+                toastContent.className = "px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-xs font-semibold flex items-center gap-2 bg-emerald-500/20 border-emerald-500/30 text-emerald-600 dark:text-emerald-300";
+                toastIcon.className = "fa-solid fa-circle-check text-base";
             }
 
             toast.classList.remove('translate-x-full', 'opacity-0');
@@ -474,45 +459,75 @@
 
         function setAuthMode(mode) {
             authMode = mode;
-            const tabLogin = document.getElementById('authTabLogin');
-            const tabRegister = document.getElementById('authTabRegister');
-            const submitBtnText = document.getElementById('authSubmitText');
+            state.enteredPin = '';
+            render();
+        }
 
-            if (mode === 'login') {
-                tabLogin.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md";
-                tabRegister.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200";
-                if (submitBtnText) submitBtnText.innerText = t('loginSubmitBtn');
+        // Handle Bank Keypad Input
+        function handleKeypadPress(num) {
+            if (num === 'backspace') {
+                state.enteredPin = state.enteredPin.slice(0, -1);
+            } else if (state.enteredPin.length < 10) {
+                state.enteredPin += num;
+            }
+            updatePinDots();
+        }
+
+        function updatePinDots() {
+            const container = document.getElementById('pinDotsContainer');
+            if (!container) return;
+
+            let html = '';
+            for (let i = 0; i < 10; i++) {
+                const filled = i < state.enteredPin.length;
+                html += `
+                    <div class="w-6 h-8 rounded-lg border flex items-center justify-center font-bold text-sm transition-all ${
+                        filled 
+                        ? 'border-brand-pink bg-gradient-to-tr from-brand-pink to-brand-pinkLight text-white shadow-md shadow-brand-pink/20 scale-105' 
+                        : 'border-slate-300 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50 text-transparent'
+                    }">
+                        ${filled ? state.enteredPin[i] : '•'}
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function triggerBiometrics() {
+            showToast("สแกน Touch ID / Face ID สำเร็จ!", "success");
+            if (state.users.length > 0) {
+                state.currentUser = state.users[0];
+                saveData();
+                render();
             } else {
-                tabRegister.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md";
-                tabLogin.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200";
-                if (submitBtnText) submitBtnText.innerText = t('registerSubmitBtn');
+                showToast("ยังไม่มีผู้ใช้อยู่ในระบบ กรุณาลงทะเบียนก่อน", "error");
             }
         }
 
-        function handleEmailAuth(e) {
+        function handleBankAuth(e) {
             e.preventDefault();
             const emailInput = document.getElementById('authEmail').value.trim().toLowerCase();
-            const passwordInput = document.getElementById('authPassword').value;
+            const pinInput = state.enteredPin;
 
             if (!emailInput.endsWith('@bumail.net') && !emailInput.endsWith('@bu.ac.th')) {
                 showToast(t('requireBUEmail'), 'error');
                 return;
             }
 
-            if (!passwordInput || passwordInput.length < 8) {
-                showToast(t('invalidPassword'), 'error');
+            if (pinInput.length !== 10) {
+                showToast(t('require10Digits'), 'error');
                 return;
             }
 
-            const existingUser = state.users.find(u => u.email === emailInput);
+            const existingUser = state.users.find(u => u.email === emailInput || u.studentId === pinInput);
 
             if (authMode === 'login') {
                 if (!existingUser) {
                     showToast(t('userNotFound'), 'error');
                     return;
                 }
-                if (existingUser.password !== passwordInput) {
-                    showToast(t('wrongPassword'), 'error');
+                if (existingUser.studentId !== pinInput) {
+                    showToast("เลขประจำตัว 10 หลักไม่ถูกต้อง", "error");
                     return;
                 }
                 state.currentUser = existingUser;
@@ -527,7 +542,7 @@
                 state.currentUser = {
                     uid: 'user_' + Date.now(),
                     email: emailInput,
-                    password: passwordInput,
+                    studentId: pinInput,
                     isSetup: false
                 };
                 saveData();
@@ -539,6 +554,7 @@
         function logout() {
             state.currentUser = null;
             state.activeTab = 'dashboard';
+            state.enteredPin = '';
             saveData();
             showToast(t('success'));
             render();
@@ -550,20 +566,17 @@
         }
 
         function updateNavState() {
-            const topHeader = document.getElementById('topHeader');
-            const bottomNav = document.getElementById('bottomNav');
             const logoutBtn = document.getElementById('logoutBtn');
+            const bottomNav = document.getElementById('bottomNav');
             const navApprovals = document.getElementById('nav-approvals');
             const navAdmin = document.getElementById('nav-admin');
 
             if (!state.currentUser || !state.currentUser.isSetup) {
-                topHeader.classList.add('hidden');
                 bottomNav.classList.add('hidden');
                 logoutBtn.classList.add('hidden');
                 return;
             }
 
-            topHeader.classList.remove('hidden');
             bottomNav.classList.remove('hidden');
             logoutBtn.classList.remove('hidden');
 
@@ -581,17 +594,18 @@
             }
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-gradient-to-r', 'from-brand-pink', 'to-brand-pinkLight', 'text-white', 'shadow-lg', 'scale-105');
-                btn.classList.add('text-slate-500', 'dark:text-slate-400');
+                btn.classList.remove('bg-gradient-to-r', 'from-brand-pink', 'to-brand-pinkLight', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-400');
             });
 
             const activeBtn = document.getElementById(`nav-${state.activeTab}`);
             if (activeBtn) {
-                activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
-                activeBtn.classList.add('bg-gradient-to-r', 'from-brand-pink', 'to-brand-pinkLight', 'text-white', 'shadow-lg', 'scale-105');
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('bg-gradient-to-r', 'from-brand-pink', 'to-brand-pinkLight', 'text-white', 'shadow-md');
             }
         }
 
+        // Proof Modal Viewer Logic
         let currentModalProof = null;
         function openProofModal(imgUrl, title, subtitle) {
             currentModalProof = imgUrl;
@@ -609,13 +623,13 @@
             if (!currentModalProof) return;
             const link = document.createElement('a');
             link.href = currentModalProof;
-            link.download = `ldc14-proof-${Date.now()}.png`;
+            link.download = `ldc14-bank-slip-${Date.now()}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        /* --- Image Cropper Logic (1:1 Aspect Ratio) --- */
+        /* --- Image Cropper Logic (1:1) --- */
         let cropper = null;
         let cropTargetPreviewId = null;
 
@@ -628,14 +642,14 @@
                 if (isProfile) {
                     cropTargetPreviewId = previewId;
                     openCropModal(reader.result);
-                    event.target.value = ''; // Reset file input
+                    event.target.value = '';
                 } else {
                     uploadedImageTemp = reader.result;
                     const container = document.getElementById(previewId);
                     if (container) {
                         container.innerHTML = `
-                            <img src="${reader.result}" class="w-20 h-20 rounded-xl object-cover shadow-md mx-auto" />
-                            <span class="text-[10px] text-emerald-500 font-semibold">อัปโหลดเรียบร้อย</span>
+                            <img src="${reader.result}" class="w-16 h-16 rounded-xl object-cover shadow-sm mx-auto" />
+                            <span class="text-[10px] text-emerald-500 font-semibold mt-1 block">อัปโหลดสลิปสำเร็จ</span>
                         `;
                     }
                 }
@@ -648,16 +662,13 @@
             modalImg.src = imageSrc;
             document.getElementById('cropModal').classList.remove('hidden');
 
-            if (cropper) {
-                cropper.destroy();
-            }
+            if (cropper) cropper.destroy();
 
             cropper = new Cropper(modalImg, {
-                aspectRatio: 1, // Enforce 1:1 Aspect Ratio
+                aspectRatio: 1,
                 viewMode: 1,
-                autoCropArea: 0.95,
-                responsive: true,
-                background: false
+                autoCropArea: 0.9,
+                responsive: true
             });
         }
 
@@ -671,17 +682,13 @@
 
         function applyCropImage() {
             if (!cropper) return;
-            const canvas = cropper.getCroppedCanvas({
-                width: 400,
-                height: 400
-            });
-
+            const canvas = cropper.getCroppedCanvas({ width: 350, height: 350 });
             uploadedImageTemp = canvas.toDataURL('image/jpeg', 0.9);
             const container = document.getElementById(cropTargetPreviewId);
             if (container) {
                 container.innerHTML = `
-                    <img src="${uploadedImageTemp}" class="w-20 h-20 rounded-full object-cover shadow-md mx-auto border-2 border-brand-pink" />
-                    <span class="text-[10px] text-emerald-500 font-semibold">ครอปรูป 1:1 สำเร็จ</span>
+                    <img src="${uploadedImageTemp}" class="w-16 h-16 rounded-full object-cover shadow-md mx-auto border-2 border-brand-pink" />
+                    <span class="text-[10px] text-emerald-500 font-semibold mt-1 block">ครอปรูป 1:1 สำเร็จ</span>
                 `;
             }
             closeCropModal();
@@ -692,7 +699,8 @@
             updateNavState();
 
             if (!state.currentUser) {
-                container.innerHTML = renderLoginScreen();
+                container.innerHTML = renderBankLoginScreen();
+                updatePinDots();
                 return;
             }
 
@@ -727,98 +735,127 @@
             });
         }
 
-        function renderLoginScreen() {
+        /* --- 1. Bank Style Login Screen --- */
+        function renderBankLoginScreen() {
             return `
-                <div class="flex flex-col items-center justify-center min-h-[80vh] text-center px-2">
-                    <div class="glass-panel p-8 rounded-3xl max-w-sm w-full space-y-6 shadow-2xl">
-                        <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-brand-pink to-brand-gold flex items-center justify-center text-white shadow-xl shadow-brand-pink/30 animate-bounce">
-                            <i class="fa-solid fa-crown text-3xl"></i>
+                <div class="flex flex-col items-center justify-between min-h-[75vh] pt-4 space-y-5">
+                    <!-- Bank Branding Welcome & Logo (Pink Heart on Gold Background) -->
+                    <div class="text-center space-y-2">
+                        <div class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-tr from-brand-gold via-brand-goldLight to-yellow-300 flex items-center justify-center text-brand-pink shadow-xl shadow-brand-gold/30 border-2 border-amber-200/60 animate-bounce">
+                            <i class="fa-solid fa-heart text-3xl text-brand-pink"></i>
                         </div>
-                        <div class="space-y-2">
-                            <h2 class="text-2xl font-extrabold bg-gradient-to-r from-brand-pink to-brand-gold bg-clip-text text-transparent">
-                                ${t('loginTitle')}
-                            </h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                                ${t('loginSubtitle')}
-                            </p>
-                        </div>
-
-                        <div class="p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-950/50 flex gap-1 border border-white/20">
-                            <button id="authTabLogin" onclick="setAuthMode('login')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all ${authMode === 'login' ? 'bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md' : 'text-slate-500 dark:text-slate-400'}">
-                                ${t('loginTabBtn')}
-                            </button>
-                            <button id="authTabRegister" onclick="setAuthMode('register')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all ${authMode === 'register' ? 'bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md' : 'text-slate-500 dark:text-slate-400'}">
-                                ${t('registerTabBtn')}
-                            </button>
-                        </div>
-
-                        <form onsubmit="handleEmailAuth(event)" class="space-y-4 text-left">
-                            <div>
-                                <label class="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">
-                                    <i class="fa-solid fa-envelope text-brand-pink mr-1"></i> ${t('emailInputLabel')}
-                                </label>
-                                <input type="email" id="authEmail" required placeholder="name.sur@bumail.net" class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">
-                                    <i class="fa-solid fa-lock text-brand-pink mr-1"></i> ${t('passwordInputLabel')}
-                                </label>
-                                <input type="password" id="authPassword" required placeholder="••••••••" minlength="8" class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink transition-all">
-                            </div>
-
-                            <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-sm shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-all flex items-center justify-center gap-2 mt-2">
-                                <i class="fa-solid fa-right-to-bracket"></i>
-                                <span id="authSubmitText">${authMode === 'login' ? t('loginSubmitBtn') : t('registerSubmitBtn')}</span>
-                            </button>
-                        </form>
+                        <h2 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-brand-pink to-brand-gold bg-clip-text text-transparent">
+                            ${t('bankWelcome')}
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase">
+                            The 14th Generation of LDC
+                        </p>
                     </div>
+
+                    <!-- Auth Mode Switcher -->
+                    <div class="w-full max-w-xs p-1 rounded-2xl bg-slate-200/60 dark:bg-slate-800/60 flex gap-1 border border-slate-300/40 dark:border-white/5">
+                        <button onclick="setAuthMode('login')" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${authMode === 'login' ? 'bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md' : 'text-slate-500 dark:text-slate-400'}">
+                            ${t('loginSubmitBtn')}
+                        </button>
+                        <button onclick="setAuthMode('register')" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${authMode === 'register' ? 'bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md' : 'text-slate-500 dark:text-slate-400'}">
+                            ${t('registerTabBtn')}
+                        </button>
+                    </div>
+
+                    <!-- Form Container -->
+                    <form onsubmit="handleBankAuth(event)" class="w-full max-w-xs space-y-4">
+                        <div>
+                            <label class="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">
+                                <i class="fa-solid fa-at text-brand-pink mr-1"></i> ${t('buEmailLabel')}
+                            </label>
+                            <input type="email" id="authEmail" required placeholder="name.sur@bumail.net" class="w-full px-4 py-2.5 rounded-2xl bg-white/70 dark:bg-slate-800/70 border border-slate-300 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                        </div>
+
+                        <!-- 10 Pin Display Dots -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                    <i class="fa-solid fa-key text-brand-gold mr-1"></i> ${t('studentIdLabel')}
+                                </label>
+                                <span class="text-[10px] text-slate-400 font-mono">${state.enteredPin.length}/10</span>
+                            </div>
+                            <div id="pinDotsContainer" class="flex justify-between items-center gap-1 my-2">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Banking Custom NumPad -->
+                        <div class="grid grid-cols-3 gap-2 pt-2">
+                            ${[1,2,3,4,5,6,7,8,9].map(num => `
+                                <button type="button" onclick="handleKeypadPress('${num}')" class="keypad-btn py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 shadow-sm text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">
+                                    ${num}
+                                </button>
+                            `).join('')}
+                            <button type="button" onclick="triggerBiometrics()" class="keypad-btn py-3 rounded-2xl bg-brand-pink/10 border border-brand-pink/20 text-brand-pink flex items-center justify-center" title="Biometrics">
+                                <i class="fa-solid fa-fingerprint text-lg"></i>
+                            </button>
+                            <button type="button" onclick="handleKeypadPress('0')" class="keypad-btn py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 shadow-sm text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">
+                                0
+                            </button>
+                            <button type="button" onclick="handleKeypadPress('backspace')" class="keypad-btn py-3 rounded-2xl bg-slate-200/50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center">
+                                <i class="fa-solid fa-delete-left text-base"></i>
+                            </button>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-xs shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-all flex items-center justify-center gap-2 mt-3">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>${authMode === 'login' ? 'เข้าสู่ระบบ (Sign In)' : 'ถัดไป (Next Step)'}</span>
+                        </button>
+                    </form>
                 </div>
             `;
         }
 
+        /* --- Onboarding Profile Setup Screen --- */
         function renderOnboardingScreen() {
             return `
-                <div class="max-w-md mx-auto pt-6">
-                    <div class="glass-panel p-6 rounded-3xl space-y-5 shadow-2xl">
+                <div class="max-w-xs mx-auto pt-4 space-y-4">
+                    <div class="glass-banking p-5 rounded-3xl space-y-4 shadow-xl">
                         <div class="text-center space-y-1">
-                            <h2 class="text-xl font-bold">${t('onboardingTitle')}</h2>
-                            <p class="text-xs text-slate-500">${state.currentUser.email}</p>
+                            <h2 class="text-base font-bold">${t('onboardingTitle')}</h2>
+                            <p class="text-[10px] text-slate-400">${state.currentUser.email}</p>
                         </div>
 
-                        <form onsubmit="saveProfileOnboarding(event)" class="space-y-4">
-                            <div class="grid grid-cols-2 gap-3">
+                        <form onsubmit="saveProfileOnboarding(event)" class="space-y-3">
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="text-xs font-semibold mb-1 block">${t('name')}</label>
-                                    <input type="text" id="onb_name" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                    <label class="text-[10px] font-semibold mb-1 block">${t('name')}</label>
+                                    <input type="text" id="onb_name" required class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
                                 </div>
                                 <div>
-                                    <label class="text-xs font-semibold mb-1 block">${t('surname')}</label>
-                                    <input type="text" id="onb_surname" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                    <label class="text-[10px] font-semibold mb-1 block">${t('surname')}</label>
+                                    <input type="text" id="onb_surname" required class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] font-semibold mb-1 block">${t('nickname')}</label>
+                                    <input type="text" id="onb_nickname" required class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-semibold mb-1 block">${t('studentId')}</label>
+                                    <input type="text" id="onb_studentId" pattern="\\d{10}" maxLength="10" value="${state.currentUser.studentId || ''}" readonly class="w-full px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-mono">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('nickname')}</label>
-                                <input type="text" id="onb_nickname" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
-                            </div>
-
-                            <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('studentId')}</label>
-                                <input type="text" id="onb_studentId" pattern="\\d{10}" maxLength="10" placeholder="166010xxxx" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
-                            </div>
-
-                            <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('photoUrl')}</label>
+                                <label class="text-[10px] font-semibold mb-1 block">${t('photoUrl')}</label>
                                 <input type="file" id="onb_photoFile" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'onb_photoPreview', true)">
-                                <label for="onb_photoFile" class="cursor-pointer block p-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
-                                    <div id="onb_photoPreview" class="flex flex-col items-center gap-2">
-                                        <i class="fa-solid fa-crop-simple text-slate-400 text-xl"></i>
-                                        <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                <label for="onb_photoFile" class="cursor-pointer block p-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
+                                    <div id="onb_photoPreview" class="flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-camera text-slate-400 text-base"></i>
+                                        <span class="text-[10px] text-slate-400">${t('uploadImage')}</span>
                                     </div>
                                 </label>
                             </div>
 
-                            <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-sm shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-all mt-4">
+                            <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-xs shadow-md mt-2">
                                 ${t('saveProfile')}
                             </button>
                         </form>
@@ -841,11 +878,10 @@
             const newUser = {
                 uid: state.currentUser.uid,
                 email: state.currentUser.email,
-                password: state.currentUser.password,
+                studentId: studentId,
                 name: document.getElementById('onb_name').value,
                 surname: document.getElementById('onb_surname').value,
                 nickname: document.getElementById('onb_nickname').value,
-                studentId: studentId,
                 photoUrl: uploadedImageTemp || '',
                 role: isFirst ? 'treasurer' : 'member',
                 isSetup: true
@@ -859,6 +895,7 @@
             render();
         }
 
+        /* --- 2. Mobile Banking Dashboard View --- */
         function renderDashboardView() {
             const approvedDeposits = state.transactions
                 .filter(t => t.type === 'deposit' && t.status === 'approved')
@@ -871,103 +908,168 @@
             const balance = approvedDeposits - approvedExpenses;
 
             return `
-                <div class="space-y-6 animate-in fade-in duration-300">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-xl font-bold">สวัสดี, ${state.currentUser.nickname}! 👋</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">LDC 14th Generation</p>
+                <div class="space-y-4 animate-in fade-in duration-200">
+                    <!-- User Greeting Header -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-10 h-10 rounded-full border-2 border-brand-pink overflow-hidden shrink-0 bg-slate-200">
+                                ${state.currentUser.photoUrl 
+                                    ? `<img src="${state.currentUser.photoUrl}" class="w-full h-full object-cover" />`
+                                    : `<div class="w-full h-full flex items-center justify-center text-slate-400"><i class="fa-solid fa-user text-sm"></i></div>`
+                                }
+                            </div>
+                            <div>
+                                <h2 class="text-sm font-bold leading-tight">สวัสดี, ${state.currentUser.nickname} 👋</h2>
+                                <p class="text-[10px] text-slate-400 font-mono">${state.currentUser.studentId}</p>
+                            </div>
                         </div>
-                        <span class="px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink dark:text-pink-300 border border-brand-pink/30 text-xs font-semibold uppercase">
+                        <span class="px-2.5 py-1 rounded-full bg-brand-pink/10 text-brand-pink dark:text-pink-300 border border-brand-pink/20 text-[10px] font-bold uppercase">
                             ${t(state.currentUser.role)}
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="glass-panel p-6 rounded-3xl relative overflow-hidden bg-gradient-to-br from-brand-pink/90 to-brand-pinkDark text-white shadow-xl">
-                            <i class="fa-solid fa-vault absolute top-0 right-0 p-6 text-9xl opacity-10 pointer-events-none"></i>
-                            <p class="text-xs font-medium text-pink-200 tracking-wider uppercase mb-1">${t('totalBalance')}</p>
-                            <h3 class="text-4xl font-extrabold tracking-tight">฿${balance.toLocaleString()}</h3>
-                            <div class="mt-6 flex justify-between items-center">
-                                <span class="text-xs bg-white/20 backdrop-blur-md px-3 py-1 rounded-full">LDC14 Vault</span>
-                                <button onclick="toggleDepositModal()" class="px-4 py-2 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldLight text-slate-900 font-bold text-xs shadow-lg hover:opacity-90 transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-plus"></i> ${t('addFunds')}
-                                </button>
+                    <!-- Luxury Metallic Bank Card -->
+                    <div class="bank-card rounded-3xl p-5 text-white flex flex-col justify-between min-h-[190px] relative shadow-2xl border border-white/10">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <!-- EMV Gold Chip Icon -->
+                                <div class="w-9 h-7 rounded-md bg-gradient-to-tr from-brand-gold to-brand-goldLight border border-yellow-200/50 flex items-center justify-center shadow-inner">
+                                    <div class="w-5 h-3 border border-yellow-800/30 rounded-sm"></div>
+                                </div>
+                                <i class="fa-solid fa-wifi text-xs text-white/60 rotate-90"></i>
                             </div>
+                            <button onclick="toggleBalanceVisibility()" class="text-white/80 hover:text-white px-2 py-1 rounded-xl bg-white/10 text-xs backdrop-blur-md flex items-center gap-1">
+                                <i class="fa-solid ${state.hideBalance ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                <span class="text-[10px]">${state.hideBalance ? t('showBalance') : t('hideBalance')}</span>
+                            </button>
                         </div>
 
-                        <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between shadow-xl">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 tracking-wider uppercase mb-1">${t('totalExpenses')}</p>
-                                <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">฿${approvedExpenses.toLocaleString()}</h3>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-between text-xs text-slate-500">
-                                <span>รายการอนุมัติทั้งหมด</span>
-                                <span class="font-bold text-rose-500">
-                                    ${state.transactions.filter(t => t.type === 'expense' && t.status === 'approved').length} รายการ
-                                </span>
-                            </div>
+                        <div class="my-3">
+                            <p class="text-[10px] text-white/70 uppercase tracking-widest font-semibold">${t('totalBalance')}</p>
+                            <h3 class="text-3xl font-extrabold tracking-tight mt-0.5 font-mono">
+                                ${state.hideBalance ? '••••••••' : `฿${balance.toLocaleString()}`}
+                            </h3>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-white/80 border-t border-white/10 pt-2.5 font-mono">
+                            <span>LDC14 VAULT CARD</span>
+                            <span>EXP 12/28</span>
                         </div>
                     </div>
 
-                    <div id="depositFormDrawer" class="hidden glass-panel p-6 rounded-3xl animate-in zoom-in-95 duration-300">
-                        <h3 class="text-lg font-bold mb-4">${t('addFunds')}</h3>
-                        <form onsubmit="submitDeposit(event)" class="space-y-4">
+                    <!-- Quick Action Services Grid -->
+                    <div class="space-y-2">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">${t('quickActions')}</h4>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="toggleDepositModal()" class="glass-banking p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-brand-pink/10 transition-all text-center">
+                                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-money-bill-transfer"></i>
+                                </div>
+                                <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">${t('addFunds')}</span>
+                            </button>
+                            <button onclick="switchTab('expenses')" class="glass-banking p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-brand-pink/10 transition-all text-center">
+                                <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                </div>
+                                <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">${t('requestReimbursement')}</span>
+                            </button>
+                            ${state.currentUser.role === 'treasurer' ? `
+                                <button onclick="switchTab('approvals')" class="glass-banking p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-brand-pink/10 transition-all text-center">
+                                    <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-lg relative">
+                                        <i class="fa-solid fa-stamp text-amber-500"></i>
+                                        ${state.transactions.filter(t => t.status === 'pending').length > 0 ? `<span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-rose-500 pulse-live"></span>` : ''}
+                                    </div>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">${t('approvals')}</span>
+                                </button>
+                                <button onclick="switchTab('admin')" class="glass-banking p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-brand-pink/10 transition-all text-center">
+                                    <div class="w-10 h-10 rounded-2xl bg-brand-gold/15 text-brand-gold flex items-center justify-center text-lg">
+                                        <i class="fa-solid fa-user-gear"></i>
+                                    </div>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">${t('admin')}</span>
+                                </button>
+                            ` : `
+                                <button onclick="switchTab('profile')" class="glass-banking p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-brand-pink/10 transition-all text-center">
+                                    <div class="w-10 h-10 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-lg">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    </div>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">ประวัติ</span>
+                                </button>
+                                <button onclick="switchTab('profile')" class="glass-banking p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-brand-pink/10 transition-all text-center">
+                                    <div class="w-10 h-10 rounded-2xl bg-slate-500/10 text-slate-400 flex items-center justify-center text-lg">
+                                        <i class="fa-solid fa-id-card"></i>
+                                    </div>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">${t('profile')}</span>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+
+                    <!-- Deposit Modal Drawer -->
+                    <div id="depositFormDrawer" class="hidden glass-banking p-5 rounded-3xl animate-in zoom-in-95 duration-200">
+                        <h3 class="text-sm font-bold mb-3 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-plus text-brand-pink"></i> ${t('addFunds')}
+                        </h3>
+                        <form onsubmit="submitDeposit(event)" class="space-y-3">
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('amount')}</label>
-                                <input type="number" id="dep_amount" required placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                <label class="text-[10px] font-semibold mb-1 block">${t('amount')}</label>
+                                <input type="number" id="dep_amount" required placeholder="0.00" class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                             </div>
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('slipUrl')}</label>
+                                <label class="text-[10px] font-semibold mb-1 block">${t('slipUrl')}</label>
                                 <input type="file" id="dep_slipFile" accept="image/*" required class="hidden" onchange="handleImageUpload(event, 'dep_slipPreview')">
-                                <label for="dep_slipFile" class="cursor-pointer block p-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
-                                    <div id="dep_slipPreview" class="flex flex-col items-center gap-2">
-                                        <i class="fa-solid fa-file-arrow-up text-slate-400 text-xl"></i>
-                                        <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                <label for="dep_slipFile" class="cursor-pointer block p-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
+                                    <div id="dep_slipPreview" class="flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-cloud-arrow-up text-slate-400 text-lg"></i>
+                                        <span class="text-[10px] text-slate-400">${t('uploadImage')}</span>
                                     </div>
                                 </label>
                             </div>
                             <div class="flex gap-2">
-                                <button type="button" onclick="toggleDepositModal()" class="flex-1 py-3 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 text-sm font-medium">${t('cancel')}</button>
-                                <button type="submit" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white text-sm font-bold shadow-md">${t('submit')}</button>
+                                <button type="button" onclick="toggleDepositModal()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-semibold">${t('cancel')}</button>
+                                <button type="submit" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white text-xs font-bold shadow-md">${t('submit')}</button>
                             </div>
                         </form>
                     </div>
 
-                    <div class="mt-8 space-y-4">
-                        <h3 class="text-lg font-bold">${t('movementHistory')}</h3>
-                        <div class="space-y-3">
-                            ${state.transactions.length === 0 ? `<p class="text-slate-500 text-center py-6 text-sm">${t('noActivity')}</p>` : ''}
+                    <!-- Movement / Transaction Activity Log -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">${t('movementHistory')}</h3>
+                            <span class="text-[10px] text-slate-400">${state.transactions.length} รายการ</span>
+                        </div>
+                        <div class="space-y-2">
+                            ${state.transactions.length === 0 ? `<p class="text-slate-400 text-center py-6 text-xs">${t('noActivity')}</p>` : ''}
                             ${state.transactions.map(tx => {
                                 const reqUser = state.users.find(u => u.uid === (tx.requestedBy || tx.targetUser));
                                 const imgProof = tx.slipUrl || tx.proofUrl;
                                 return `
-                                    <div class="glass-card p-4 rounded-2xl flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between shadow-sm">
-                                        <div class="flex items-center gap-3">
-                                            <div class="p-3 rounded-2xl shrink-0 ${
-                                                tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
-                                                tx.type === 'expense' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400' :
-                                                'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                    <div class="glass-banking p-3 rounded-2xl flex items-center justify-between gap-2 shadow-sm">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-9 h-9 rounded-2xl shrink-0 flex items-center justify-center ${
+                                                tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-500' :
+                                                tx.type === 'expense' ? 'bg-rose-500/10 text-rose-500' :
+                                                'bg-amber-500/10 text-amber-500'
                                             }">
-                                                <i class="fa-solid ${tx.type === 'deposit' ? 'fa-arrow-down-left' : 'fa-arrow-up-right'} text-base"></i>
+                                                <i class="fa-solid ${tx.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up'} text-sm"></i>
                                             </div>
                                             <div>
-                                                <p class="font-semibold text-sm">
+                                                <p class="font-bold text-xs">
                                                     ${t(tx.type)}
                                                     ${tx.description ? ` - ${tx.description}` : ''}
                                                 </p>
-                                                <div class="flex items-center gap-2 mt-0.5">
-                                                    <p class="text-xs text-slate-500 dark:text-slate-400">
-                                                        ${reqUser ? reqUser.nickname : 'Unassigned'} • <span class="capitalize">${t(tx.status)}</span>
-                                                    </p>
+                                                <div class="flex items-center gap-1.5 mt-0.5">
+                                                    <span class="text-[10px] text-slate-400">
+                                                        ${reqUser ? reqUser.nickname : 'User'} • ${t(tx.status)}
+                                                    </span>
                                                     ${imgProof ? `
-                                                        <button onclick="openProofModal('${imgProof}', '${t(tx.type)} - ฿${Number(tx.amount).toLocaleString()}', 'สมาชิก: ${reqUser ? reqUser.name : ''}')" class="text-[10px] px-2 py-0.5 rounded-full bg-brand-pink/15 text-brand-pink dark:text-pink-300 border border-brand-pink/30 flex items-center gap-1 hover:bg-brand-pink/30 transition-colors font-medium">
-                                                            <i class="fa-solid fa-eye text-[10px]"></i> ${t('viewProof')}
+                                                        <button onclick="openProofModal('${imgProof}', '${t(tx.type)} - ฿${Number(tx.amount).toLocaleString()}', 'ผู้ทำรายการ: ${reqUser ? reqUser.name : ''}')" class="text-[9px] px-1.5 py-0.5 rounded-md bg-brand-pink/10 text-brand-pink flex items-center gap-0.5">
+                                                            <i class="fa-solid fa-eye text-[8px]"></i> ${t('viewProof')}
                                                         </button>
                                                     ` : ''}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="font-bold text-sm ${
+                                        <div class="font-extrabold text-xs font-mono ${
                                             tx.type === 'deposit' ? 'text-emerald-500' : 
                                             tx.status === 'rejected' ? 'text-slate-400 line-through' :
                                             'text-rose-500'
@@ -1013,76 +1115,74 @@
             render();
         }
 
+        /* --- 3. Expenses View --- */
         function renderExpensesView() {
             const expenses = state.transactions.filter(t => t.type === 'expense');
             return `
-                <div class="space-y-6 animate-in fade-in duration-300">
+                <div class="space-y-4 animate-in fade-in duration-200">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-bold">${t('expenses')}</h2>
-                        <button onclick="toggleExpenseDrawer()" class="px-4 py-2 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-xs font-semibold flex items-center gap-2">
-                            <i class="fa-solid fa-plus text-brand-pink"></i> ${t('requestReimbursement')}
+                        <h2 class="text-base font-bold">${t('expenses')}</h2>
+                        <button onclick="toggleExpenseDrawer()" class="px-3 py-1.5 rounded-xl bg-brand-pink text-white text-xs font-semibold flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-plus text-[10px]"></i> ${t('requestReimbursement')}
                         </button>
                     </div>
 
-                    <div id="expenseDrawer" class="hidden glass-panel p-6 rounded-3xl animate-in zoom-in-95 duration-300">
-                        <form onsubmit="submitExpenseClaim(event)" class="space-y-4">
+                    <div id="expenseDrawer" class="hidden glass-banking p-4 rounded-3xl animate-in zoom-in-95 duration-200">
+                        <form onsubmit="submitExpenseClaim(event)" class="space-y-3">
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('reason')}</label>
-                                <input type="text" id="exp_reason" required placeholder="เช่น ค่าพร็อพ / ค่าชุดลีด" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                <label class="text-[10px] font-semibold mb-1 block">${t('reason')}</label>
+                                <input type="text" id="exp_reason" required placeholder="เช่น ค่าอุปกรณ์ / ค่าชุดกิจกรรม" class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                             </div>
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('amount')}</label>
-                                <input type="number" id="exp_amount" required placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                <label class="text-[10px] font-semibold mb-1 block">${t('amount')}</label>
+                                <input type="number" id="exp_amount" required placeholder="0.00" class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                             </div>
                             <div class="flex gap-2">
-                                <button type="button" onclick="toggleExpenseDrawer()" class="flex-1 py-3 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-sm font-medium">${t('cancel')}</button>
-                                <button type="submit" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white text-sm font-bold">${t('submit')}</button>
+                                <button type="button" onclick="toggleExpenseDrawer()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-semibold">${t('cancel')}</button>
+                                <button type="submit" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white text-xs font-bold">${t('submit')}</button>
                             </div>
                         </form>
                     </div>
 
-                    <div class="space-y-4">
-                        ${expenses.length === 0 ? `<p class="text-slate-500 text-center py-12 text-sm">ไม่มีรายการเบิกจ่าย</p>` : ''}
+                    <div class="space-y-2.5">
+                        ${expenses.length === 0 ? `<p class="text-slate-400 text-center py-8 text-xs">ไม่มีรายการขอเบิกจ่าย</p>` : ''}
                         ${expenses.map(tx => {
                             const reqUser = state.users.find(u => u.uid === tx.requestedBy);
                             return `
-                                <div class="glass-panel p-5 rounded-3xl flex flex-col sm:flex-row gap-4 justify-between">
-                                    <div class="flex gap-4">
-                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-                                            tx.status === 'approved' ? 'bg-emerald-500/10 text-emerald-600' :
-                                            tx.status === 'rejected' ? 'bg-rose-500/10 text-rose-600' :
-                                            'bg-amber-500/10 text-amber-600'
-                                        }">
-                                            <i class="fa-solid fa-receipt text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-base">${tx.description}</h4>
-                                            <p class="text-xs text-slate-500">
-                                                โดย ${reqUser ? reqUser.nickname : 'Unassigned'} • ฿${Number(tx.amount).toLocaleString()}
-                                            </p>
-                                            <div class="mt-2 flex items-center gap-2">
-                                                <span class="text-[10px] px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider ${
-                                                    tx.status === 'approved' ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' :
-                                                    tx.status === 'rejected' ? 'bg-rose-500/20 text-rose-700 dark:text-rose-400' :
-                                                    'bg-amber-500/20 text-amber-700 dark:text-amber-400'
-                                                }">
-                                                    ${t(tx.status)}
-                                                </span>
-                                                ${tx.proofUrl ? `
-                                                    <button onclick="openProofModal('${tx.proofUrl}', '${tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="text-[10px] px-2.5 py-0.5 rounded-full bg-brand-pink/20 text-brand-pink dark:text-pink-300 font-medium flex items-center gap-1">
-                                                        <i class="fa-solid fa-eye text-[10px]"></i> ${t('viewProof')}
-                                                    </button>
-                                                ` : ''}
+                                <div class="glass-banking p-3.5 rounded-2xl flex flex-col gap-2 shadow-sm">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-9 h-9 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-base shrink-0">
+                                                <i class="fa-solid fa-receipt"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-xs">${tx.description}</h4>
+                                                <p class="text-[10px] text-slate-400">โดย ${reqUser ? reqUser.nickname : 'User'}</p>
                                             </div>
                                         </div>
+                                        <span class="font-bold text-sm font-mono text-rose-500">฿${Number(tx.amount).toLocaleString()}</span>
                                     </div>
-                                    <div class="flex sm:flex-col gap-2 justify-center">
-                                        ${tx.status === 'approved' && tx.requestedBy === state.currentUser.uid && !tx.proofUrl ? `
-                                            <input type="file" id="proofFile_${tx.id}" accept="image/*" class="hidden" onchange="uploadExpenseProof(event, '${tx.id}')">
-                                            <label for="proofFile_${tx.id}" class="cursor-pointer px-4 py-2 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-                                                <i class="fa-solid fa-upload text-brand-pink"></i> ${t('uploadProof')}
-                                            </label>
-                                        ` : ''}
+                                    <div class="flex items-center justify-between pt-1 border-t border-slate-200/50 dark:border-slate-800/50">
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                                            tx.status === 'approved' ? 'bg-emerald-500/20 text-emerald-500' :
+                                            tx.status === 'rejected' ? 'bg-rose-500/20 text-rose-500' :
+                                            'bg-amber-500/20 text-amber-500'
+                                        }">
+                                            ${t(tx.status)}
+                                        </span>
+                                        <div class="flex gap-1.5">
+                                            ${tx.proofUrl ? `
+                                                <button onclick="openProofModal('${tx.proofUrl}', '${tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="text-[10px] px-2.5 py-1 rounded-xl bg-brand-pink/10 text-brand-pink font-semibold flex items-center gap-1">
+                                                    <i class="fa-solid fa-eye text-[9px]"></i> ${t('viewProof')}
+                                                </button>
+                                            ` : ''}
+                                            ${tx.status === 'approved' && tx.requestedBy === state.currentUser.uid && !tx.proofUrl ? `
+                                                <input type="file" id="proofFile_${tx.id}" accept="image/*" class="hidden" onchange="uploadExpenseProof(event, '${tx.id}')">
+                                                <label for="proofFile_${tx.id}" class="cursor-pointer px-2.5 py-1 rounded-xl bg-emerald-500 text-white text-[10px] font-bold flex items-center gap-1">
+                                                    <i class="fa-solid fa-upload"></i> ${t('uploadProof')}
+                                                </label>
+                                            ` : ''}
+                                        </div>
                                     </div>
                                 </div>
                             `;
@@ -1134,30 +1234,38 @@
             reader.readAsDataURL(file);
         }
 
+        /* --- 4. Approvals View --- */
         function renderApprovalsView() {
             const pendingDeposits = state.transactions.filter(t => t.type === 'deposit' && t.status === 'pending');
             const pendingExpenses = state.transactions.filter(t => t.type === 'expense' && t.status === 'pending');
 
             return `
-                <div class="space-y-6 animate-in fade-in duration-300">
-                    <h2 class="text-xl font-bold">${t('approvals')}</h2>
+                <div class="space-y-4 animate-in fade-in duration-200">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-stamp text-brand-pink"></i> ${t('approvals')}
+                        </h2>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-pink/10 text-brand-pink font-bold">
+                            คำขอรอการตรวจสอบ
+                        </span>
+                    </div>
 
                     <div>
-                        <h3 class="text-sm font-bold mb-3 flex items-center gap-2 text-emerald-500">
-                            <i class="fa-solid fa-arrow-down-left"></i> ${t('pendingDeposits')}
+                        <h3 class="text-xs font-bold mb-2 flex items-center gap-1 text-emerald-500">
+                            <i class="fa-solid fa-clipboard-check text-[11px]"></i> ${t('pendingDeposits')}
                         </h3>
-                        <div class="space-y-3">
-                            ${pendingDeposits.length === 0 ? `<p class="text-slate-500 text-xs py-2">ไม่มีรายการรออนุมัติ</p>` : ''}
+                        <div class="space-y-2">
+                            ${pendingDeposits.length === 0 ? `<p class="text-slate-400 text-[11px] py-1">ไม่มีรายการรออนุมัติ</p>` : ''}
                             ${pendingDeposits.map(tx => renderApprovalCard(tx)).join('')}
                         </div>
                     </div>
 
-                    <div class="pt-4">
-                        <h3 class="text-sm font-bold mb-3 flex items-center gap-2 text-amber-500">
-                            <i class="fa-solid fa-arrow-up-right"></i> ${t('pendingExpenses')}
+                    <div class="pt-2">
+                        <h3 class="text-xs font-bold mb-2 flex items-center gap-1 text-amber-500">
+                            <i class="fa-solid fa-stamp text-[11px]"></i> ${t('pendingExpenses')}
                         </h3>
-                        <div class="space-y-3">
-                            ${pendingExpenses.length === 0 ? `<p class="text-slate-500 text-xs py-2">ไม่มีรายการรออนุมัติ</p>` : ''}
+                        <div class="space-y-2">
+                            ${pendingExpenses.length === 0 ? `<p class="text-slate-400 text-[11px] py-1">ไม่มีรายการรออนุมัติ</p>` : ''}
                             ${pendingExpenses.map(tx => renderApprovalCard(tx)).join('')}
                         </div>
                     </div>
@@ -1169,31 +1277,32 @@
             const reqUser = state.users.find(u => u.uid === (tx.requestedBy || tx.targetUser));
             const slip = tx.slipUrl || tx.proofUrl;
             return `
-                <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center shadow-md">
-                    <div class="flex gap-3 items-center">
-                        <div class="p-3 rounded-2xl bg-amber-500/10 text-amber-600">
-                            <i class="fa-solid fa-clock text-lg"></i>
-                        </div>
+                <div class="glass-banking p-3 rounded-2xl flex flex-col gap-2.5 shadow-sm">
+                    <div class="flex items-center justify-between">
                         <div>
-                            <h4 class="font-bold text-sm">${tx.type === 'deposit' ? t('deposit') : tx.description}</h4>
-                            <p class="text-xs text-slate-500">
-                                ${reqUser ? `${reqUser.name} (${reqUser.nickname})` : 'Unknown'} • ฿${Number(tx.amount).toLocaleString()}
+                            <h4 class="font-bold text-xs">${tx.type === 'deposit' ? t('deposit') : tx.description}</h4>
+                            <p class="text-[10px] text-slate-400">
+                                ${reqUser ? `${reqUser.name} (${reqUser.nickname})` : 'User'}
                             </p>
-                            ${slip ? `
-                                <button onclick="openProofModal('${slip}', '${tx.type === 'deposit' ? t('deposit') : tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="mt-1 text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
-                                    <i class="fa-solid fa-eye text-[10px]"></i> ${t('viewProof')}
-                                </button>
-                            ` : ''}
                         </div>
+                        <span class="font-bold text-sm font-mono text-brand-gold">฿${Number(tx.amount).toLocaleString()}</span>
                     </div>
 
-                    <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="updateTxStatus('${tx.id}', 'approved')" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold shadow-md hover:bg-emerald-600 transition-all">
-                            <i class="fa-solid fa-check"></i> ${t('approve')}
-                        </button>
-                        <button onclick="updateTxStatus('${tx.id}', 'rejected')" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold shadow-md hover:bg-rose-600 transition-all">
-                            <i class="fa-solid fa-xmark"></i> ${t('reject')}
-                        </button>
+                    <div class="flex items-center justify-between pt-1 border-t border-slate-200/40 dark:border-slate-800/40">
+                        ${slip ? `
+                            <button onclick="openProofModal('${slip}', '${tx.type === 'deposit' ? t('deposit') : tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="text-[9px] px-2 py-1 rounded-xl bg-blue-500/10 text-blue-500 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-eye text-[9px]"></i> ${t('viewProof')}
+                            </button>
+                        ` : `<div></div>`}
+
+                        <div class="flex gap-1.5">
+                            <button onclick="updateTxStatus('${tx.id}', 'approved')" class="px-3 py-1 rounded-xl bg-emerald-500 text-white text-[10px] font-bold shadow-sm">
+                                <i class="fa-solid fa-check"></i> ${t('approve')}
+                            </button>
+                            <button onclick="updateTxStatus('${tx.id}', 'rejected')" class="px-3 py-1 rounded-xl bg-rose-500 text-white text-[10px] font-bold shadow-sm">
+                                <i class="fa-solid fa-xmark"></i> ${t('reject')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1209,35 +1318,36 @@
             }
         }
 
+        /* --- 5. Admin View --- */
         function renderAdminView() {
             return `
-                <div class="space-y-6 animate-in fade-in duration-300">
-                    <h2 class="text-xl font-bold">${t('admin')}</h2>
+                <div class="space-y-4 animate-in fade-in duration-200">
+                    <h2 class="text-base font-bold">${t('admin')}</h2>
 
-                    <!-- Registered Members List -->
-                    <div class="glass-panel p-6 rounded-3xl space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-                            <h3 class="text-base font-bold flex items-center gap-2">
+                    <!-- Members List -->
+                    <div class="glass-banking p-4 rounded-3xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-2">
+                            <h3 class="text-xs font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-users text-brand-pink"></i> ${t('registeredMembers')}
                             </h3>
-                            <span class="text-xs px-2.5 py-1 rounded-full bg-brand-pink/15 text-brand-pink font-semibold">
-                                ทั้งหมด ${state.users.length} คน
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-pink/15 text-brand-pink font-bold">
+                                ${state.users.length} คน
                             </span>
                         </div>
-                        <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                        <div class="space-y-2 max-h-48 overflow-y-auto no-scrollbar">
                             ${state.users.map(u => `
-                                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden shrink-0 flex items-center justify-center">
-                                            ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover"/>` : `<i class="fa-solid fa-user text-slate-400 text-sm"></i>`}
+                                <div class="flex items-center justify-between p-2 rounded-xl bg-white/40 dark:bg-white/5 border border-slate-200/40 dark:border-white/5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                            ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover"/>` : `<i class="fa-solid fa-user text-slate-400 text-xs"></i>`}
                                         </div>
                                         <div>
-                                            <p class="font-semibold text-xs">${u.name} ${u.surname} (${u.nickname})</p>
-                                            <p class="text-[10px] text-slate-500">${u.studentId} • ${u.email}</p>
+                                            <p class="font-bold text-xs">${u.name} (${u.nickname})</p>
+                                            <p class="text-[9px] text-slate-400 font-mono">${u.studentId}</p>
                                         </div>
                                     </div>
-                                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
-                                        u.role === 'treasurer' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : 'bg-slate-500/20 text-slate-600 dark:text-slate-400'
+                                    <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                                        u.role === 'treasurer' ? 'bg-amber-500/20 text-amber-500' : 'bg-slate-500/20 text-slate-400'
                                     }">
                                         ${t(u.role)}
                                     </span>
@@ -1246,58 +1356,58 @@
                         </div>
                     </div>
 
-                    <!-- Treasurer Refund Tool -->
-                    <div class="glass-panel p-6 rounded-3xl space-y-4">
-                        <h3 class="text-base font-bold flex items-center gap-2">
+                    <!-- Refund Tool -->
+                    <div class="glass-banking p-4 rounded-3xl space-y-3">
+                        <h3 class="text-xs font-bold flex items-center gap-1.5">
                             <i class="fa-solid fa-hand-holding-dollar text-brand-gold"></i> ${t('issueRefund')}
                         </h3>
-                        <form onsubmit="submitRefund(event)" class="space-y-4">
+                        <form onsubmit="submitRefund(event)" class="space-y-2.5">
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('targetMember')}</label>
-                                <select id="ref_target" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                <label class="text-[10px] font-semibold mb-1 block">${t('targetMember')}</label>
+                                <select id="ref_target" required class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                                     <option value="">-- เลือกสมาชิก --</option>
                                     ${state.users.map(u => `
-                                        <option value="${u.uid}">${u.name} ${u.surname} (${u.nickname}) - ${u.studentId}</option>
+                                        <option value="${u.uid}">${u.name} (${u.nickname}) - ${u.studentId}</option>
                                     `).join('')}
                                 </select>
                             </div>
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('amount')}</label>
-                                <input type="number" id="ref_amount" required placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                <label class="text-[10px] font-semibold mb-1 block">${t('amount')}</label>
+                                <input type="number" id="ref_amount" required placeholder="0.00" class="w-full px-3 py-2 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                             </div>
                             <div>
-                                <label class="text-xs font-semibold mb-1 block">${t('refundSlipUrl')}</label>
+                                <label class="text-[10px] font-semibold mb-1 block">${t('refundSlipUrl')}</label>
                                 <input type="file" id="ref_slipFile" accept="image/*" required class="hidden" onchange="handleImageUpload(event, 'ref_slipPreview')">
-                                <label for="ref_slipFile" class="cursor-pointer block p-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
-                                    <div id="ref_slipPreview" class="flex flex-col items-center gap-2">
-                                        <i class="fa-solid fa-file-invoice-dollar text-slate-400 text-xl"></i>
-                                        <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                <label for="ref_slipFile" class="cursor-pointer block p-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
+                                    <div id="ref_slipPreview" class="flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-file-invoice text-slate-400 text-lg"></i>
+                                        <span class="text-[10px] text-slate-400">${t('uploadImage')}</span>
                                     </div>
                                 </label>
                             </div>
-                            <button type="submit" class="w-full py-3 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldDark text-slate-900 font-bold text-sm shadow-md">
+                            <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-brand-goldDark text-slate-900 font-bold text-xs shadow-md">
                                 ${t('submit')}
                             </button>
                         </form>
                     </div>
 
                     <!-- Member Role Manager -->
-                    <div class="space-y-3">
-                        <h3 class="text-base font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-user-gear text-brand-pink"></i> ${t('manageRoles')}
+                    <div class="space-y-2">
+                        <h3 class="text-xs font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-shield text-brand-pink"></i> ${t('manageRoles')}
                         </h3>
                         ${state.users.map(u => `
-                            <div class="glass-panel p-4 rounded-2xl flex items-center justify-between gap-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
-                                        ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover"/>` : `<i class="fa-solid fa-user text-slate-400 p-2.5"></i>`}
+                            <div class="glass-banking p-3 rounded-2xl flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden shrink-0">
+                                        ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover"/>` : `<i class="fa-solid fa-user text-slate-400 p-2"></i>`}
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-sm">${u.name} ${u.surname} (${u.nickname})</p>
-                                        <p class="text-xs text-slate-500">${u.studentId}</p>
+                                        <p class="font-bold text-xs">${u.name} (${u.nickname})</p>
+                                        <p class="text-[9px] text-slate-400 font-mono">${u.studentId}</p>
                                     </div>
                                 </div>
-                                <select onchange="changeUserRole('${u.uid}', this.value)" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+                                <select onchange="changeUserRole('${u.uid}', this.value)" class="px-2 py-1 rounded-xl text-[10px] font-bold bg-white/50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
                                     <option value="member" ${u.role === 'member' ? 'selected' : ''}>${t('member')}</option>
                                     <option value="treasurer" ${u.role === 'treasurer' ? 'selected' : ''}>${t('treasurer')}</option>
                                 </select>
@@ -1347,6 +1457,7 @@
             }
         }
 
+        /* --- 6. Profile View --- */
         let isEditingProfile = false;
         function renderProfileView() {
             const u = state.currentUser;
@@ -1355,104 +1466,102 @@
             const myRefunds = myTx.filter(t => t.type === 'refund' && t.status === 'approved').reduce((acc, t) => acc + Number(t.amount), 0);
 
             return `
-                <div class="space-y-6 animate-in fade-in duration-300">
-                    <div class="glass-panel p-6 rounded-3xl relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-brand-pink/40 to-brand-gold/40"></div>
-                        <div class="relative flex flex-col sm:flex-row gap-5 items-center sm:items-start pt-4">
-                            <div class="w-24 h-24 rounded-full border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden shrink-0 bg-slate-200 flex items-center justify-center">
-                                ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover" />` : `<i class="fa-solid fa-user text-3xl text-slate-400"></i>`}
+                <div class="space-y-4 animate-in fade-in duration-200">
+                    <div class="glass-banking p-5 rounded-3xl relative overflow-hidden">
+                        <div class="flex flex-col items-center text-center space-y-2">
+                            <div class="w-20 h-20 rounded-full border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden shrink-0 bg-slate-200">
+                                ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover" />` : `<i class="fa-solid fa-user text-2xl text-slate-400 mt-4"></i>`}
                             </div>
-                            <div class="flex-1 text-center sm:text-left">
-                                <h2 class="text-xl font-bold">${u.name} ${u.surname} (${u.nickname})</h2>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${u.studentId}</p>
-                                <span class="inline-block mt-3 px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink dark:text-pink-300 text-xs font-semibold uppercase tracking-wider">
+                            <div>
+                                <h2 class="text-base font-bold">${u.name} ${u.surname} (${u.nickname})</h2>
+                                <p class="text-[10px] text-slate-400 font-mono">${u.studentId} • ${u.email}</p>
+                                <span class="inline-block mt-2 px-3 py-0.5 rounded-full bg-brand-pink/10 text-brand-pink dark:text-pink-300 text-[10px] font-bold uppercase">
                                     ${t(u.role)}
                                 </span>
                             </div>
-                            <button onclick="toggleEditProfile()" class="px-4 py-2 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                            <button onclick="toggleEditProfile()" class="px-3 py-1 rounded-xl bg-slate-200/60 dark:bg-slate-800/60 text-[10px] font-bold flex items-center gap-1">
                                 <i class="fa-solid fa-pen-to-square text-brand-pink"></i> ${isEditingProfile ? t('cancel') : t('editProfile')}
                             </button>
                         </div>
 
                         ${isEditingProfile ? `
-                            <form onsubmit="saveProfileEdit(event)" class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 space-y-4 animate-in fade-in">
-                                <h3 class="font-bold text-sm">${t('editProfileTitle')}</h3>
-                                <div class="grid grid-cols-2 gap-3">
+                            <form onsubmit="saveProfileEdit(event)" class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label class="text-xs font-semibold mb-1 block">${t('name')}</label>
-                                        <input type="text" id="edit_name" value="${u.name}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                        <label class="text-[10px] font-semibold mb-1 block">${t('name')}</label>
+                                        <input type="text" id="edit_name" value="${u.name}" required class="w-full px-3 py-1.5 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                                     </div>
                                     <div>
-                                        <label class="text-xs font-semibold mb-1 block">${t('surname')}</label>
-                                        <input type="text" id="edit_surname" value="${u.surname}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                        <label class="text-[10px] font-semibold mb-1 block">${t('surname')}</label>
+                                        <input type="text" id="edit_surname" value="${u.surname}" required class="w-full px-3 py-1.5 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-3">
+                                <div class="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label class="text-xs font-semibold mb-1 block">${t('nickname')}</label>
-                                        <input type="text" id="edit_nickname" value="${u.nickname}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                        <label class="text-[10px] font-semibold mb-1 block">${t('nickname')}</label>
+                                        <input type="text" id="edit_nickname" value="${u.nickname}" required class="w-full px-3 py-1.5 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 text-xs">
                                     </div>
                                     <div>
-                                        <label class="text-xs font-semibold mb-1 block">${t('studentId')}</label>
-                                        <input type="text" id="edit_studentId" pattern="\\d{10}" maxLength="10" value="${u.studentId}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                        <label class="text-[10px] font-semibold mb-1 block">${t('studentId')}</label>
+                                        <input type="text" id="edit_studentId" pattern="\\d{10}" maxLength="10" value="${u.studentId}" readonly class="w-full px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-mono">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="text-xs font-semibold mb-1 block">${t('photoUrl')}</label>
+                                    <label class="text-[10px] font-semibold mb-1 block">${t('photoUrl')}</label>
                                     <input type="file" id="edit_photoFile" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'edit_photoPreview', true)">
-                                    <label for="edit_photoFile" class="cursor-pointer block p-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 text-center">
+                                    <label for="edit_photoFile" class="cursor-pointer block p-2.5 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 text-center">
                                         <div id="edit_photoPreview" class="flex flex-col items-center gap-1">
                                             <i class="fa-solid fa-crop-simple text-slate-400"></i>
-                                            <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                            <span class="text-[10px] text-slate-400">${t('uploadImage')}</span>
                                         </div>
                                     </label>
                                 </div>
-                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-xs shadow-md">
+                                <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-xs shadow-md">
                                     ${t('saveProfile')}
                                 </button>
                             </form>
                         ` : ''}
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="glass-panel p-4 rounded-2xl text-center">
-                            <p class="text-xs text-slate-500 mb-1">${t('contributions')}</p>
-                            <h4 class="text-xl font-bold text-emerald-500">฿${myContrib.toLocaleString()}</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="glass-banking p-3.5 rounded-2xl text-center">
+                            <p class="text-[10px] text-slate-400 mb-0.5">${t('contributions')}</p>
+                            <h4 class="text-base font-extrabold text-emerald-500 font-mono">฿${myContrib.toLocaleString()}</h4>
                         </div>
-                        <div class="glass-panel p-4 rounded-2xl text-center">
-                            <p class="text-xs text-slate-500 mb-1">${t('refunds')}</p>
-                            <h4 class="text-xl font-bold text-brand-gold">฿${myRefunds.toLocaleString()}</h4>
+                        <div class="glass-banking p-3.5 rounded-2xl text-center">
+                            <p class="text-[10px] text-slate-400 mb-0.5">${t('refunds')}</p>
+                            <h4 class="text-base font-extrabold text-brand-gold font-mono">฿${myRefunds.toLocaleString()}</h4>
                         </div>
                     </div>
 
-                    <div class="space-y-3">
-                        <h3 class="text-base font-bold">${t('history')}</h3>
-                        ${myTx.length === 0 ? `<p class="text-slate-500 text-xs text-center py-4">ไม่มีประวัติการชำระเงิน</p>` : ''}
+                    <div class="space-y-2">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">${t('history')}</h3>
+                        ${myTx.length === 0 ? `<p class="text-slate-400 text-[10px] text-center py-4">ไม่มีประวัติการชำระเงิน</p>` : ''}
                         ${myTx.map(tx => {
                             const slip = tx.slipUrl || tx.proofUrl;
                             return `
-                                <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-2.5 rounded-xl shrink-0 ${
-                                            tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-600' :
-                                            tx.type === 'expense' ? 'bg-rose-500/10 text-rose-600' :
-                                            'bg-amber-500/10 text-amber-600'
+                                <div class="glass-banking p-3 rounded-2xl flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-xl shrink-0 flex items-center justify-center ${
+                                            tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-500' :
+                                            tx.type === 'expense' ? 'bg-rose-500/10 text-rose-500' :
+                                            'bg-amber-500/10 text-amber-500'
                                         }">
-                                            <i class="fa-solid ${tx.type === 'deposit' ? 'fa-arrow-down-left' : 'fa-arrow-up-right'} text-sm"></i>
+                                            <i class="fa-solid ${tx.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up'} text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-semibold text-xs capitalize">${t(tx.type)}</p>
-                                            <div class="flex items-center gap-2 mt-0.5">
-                                                <span class="text-[10px] text-slate-500 capitalize">${t(tx.status)}</span>
+                                            <p class="font-bold text-xs">${t(tx.type)}</p>
+                                            <div class="flex items-center gap-1 mt-0.5">
+                                                <span class="text-[9px] text-slate-400">${t(tx.status)}</span>
                                                 ${slip ? `
-                                                    <button onclick="openProofModal('${slip}', '${t(tx.type)} - ฿${Number(tx.amount).toLocaleString()}', 'สถานะ: ${t(tx.status)}')" class="text-[9px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
-                                                        <i class="fa-solid fa-eye text-[9px]"></i> ${t('viewProof')}
+                                                    <button onclick="openProofModal('${slip}', '${t(tx.type)} - ฿${Number(tx.amount).toLocaleString()}', 'สถานะ: ${t(tx.status)}')" class="text-[8px] px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-500 font-semibold flex items-center gap-0.5">
+                                                        <i class="fa-solid fa-eye text-[8px]"></i> ${t('viewProof')}
                                                     </button>
                                                 ` : ''}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="font-bold text-xs ${tx.type === 'expense' ? 'text-rose-500' : 'text-emerald-500'}">
+                                    <div class="font-bold text-xs font-mono ${tx.type === 'expense' ? 'text-rose-500' : 'text-emerald-500'}">
                                         ${tx.type === 'expense' ? '-' : '+'}฿${Number(tx.amount).toLocaleString()}
                                     </div>
                                 </div>
@@ -1480,7 +1589,6 @@
             u.name = document.getElementById('edit_name').value;
             u.surname = document.getElementById('edit_surname').value;
             u.nickname = document.getElementById('edit_nickname').value;
-            u.studentId = studentId;
             if (uploadedImageTemp) u.photoUrl = uploadedImageTemp;
 
             const idx = state.users.findIndex(usr => usr.uid === u.uid);
@@ -1493,6 +1601,7 @@
             render();
         }
 
+        // Initialize on load
         window.addEventListener('DOMContentLoaded', initData);
     </script>
 </body>
