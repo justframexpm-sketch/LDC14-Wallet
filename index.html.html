@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LDC14 Wallet - Cheerleader Fund Management</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#8E3C77',
+                            pinkLight: '#B04F95',
+                            pinkDark: '#5A234B',
+                            gold: '#D4AF37',
+                            goldLight: '#F3E5AB',
+                            goldDark: '#997A15'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'Kanit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Glassmorphic Styles -->
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Apple Liquid Glass Styling */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .dark .glass-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.3));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .dark .glass-nav {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Dynamic Liquid Ambient Orbs */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseOrb 10s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseOrb {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.15) translate(20px, -20px); }
+        }
+
+        /* Hide scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-500 overflow-x-hidden">
+
+    <!-- Ambient Glass Lighting Orbs -->
+    <div class="ambient-orb w-96 h-96 -top-20 -left-20 bg-brand-pink/30 dark:bg-brand-pink/20"></div>
+    <div class="ambient-orb w-[30rem] h-[30rem] -bottom-32 -right-32 bg-brand-gold/20 dark:bg-brand-gold/10" style="animation-delay: 3s;"></div>
+    <div class="ambient-orb w-80 h-80 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-pink-400/20 dark:bg-purple-900/10" style="animation-delay: 5s;"></div>
+
+    <div id="app" class="relative z-10 flex flex-col min-h-screen max-w-md md:max-w-4xl mx-auto px-4 pb-24 md:pb-6">
+        
+        <!-- Top Navigation Header -->
+        <header class="sticky top-4 z-40 my-4">
+            <div class="glass-panel rounded-3xl px-5 py-3.5 flex items-center justify-between shadow-xl">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-pink to-brand-gold flex items-center justify-center text-white shadow-lg shadow-brand-pink/30 font-bold text-lg">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-none bg-gradient-to-r from-brand-pink to-brand-gold bg-clip-text text-transparent">
+                            LDC14 Wallet
+                        </h1>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase mt-0.5">
+                            Cheerleader Fund
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Global Controls -->
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleLang()" class="px-3 py-1.5 rounded-xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-globe text-brand-pink"></i>
+                        <span id="langLabel">TH</span>
+                    </button>
+                    <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-slate-700 dark:text-slate-300 transition-all shadow-sm">
+                        <i id="themeIcon" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button id="logoutBtn" onclick="logout()" class="hidden p-2.5 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border border-rose-500/20 transition-all shadow-sm" title="Log Out">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content View Container -->
+        <main id="mainContainer" class="flex-1 w-full space-y-6">
+            <!-- Dynamic Content loaded via JS -->
+        </main>
+
+        <!-- Mobile & Desktop Bottom Navigation -->
+        <nav id="bottomNav" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md">
+            <div class="glass-nav rounded-full p-2 shadow-2xl flex items-center justify-around border border-white/40 dark:border-white/10">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
+                    <i class="fa-solid fa-house text-base"></i>
+                    <span class="text-[10px] font-medium" data-i18n="dashboard">หน้าหลัก</span>
+                </button>
+                <button onclick="switchTab('expenses')" id="nav-expenses" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
+                    <i class="fa-solid fa-receipt text-base"></i>
+                    <span class="text-[10px] font-medium" data-i18n="expenses">ค่าใช้จ่าย</span>
+                </button>
+                <button onclick="switchTab('approvals')" id="nav-approvals" class="nav-btn hidden flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
+                    <i class="fa-solid fa-clipboard-check text-base"></i>
+                    <span class="text-[10px] font-medium" data-i18n="approvals">อนุมัติ</span>
+                </button>
+                <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn hidden flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
+                    <i class="fa-solid fa-shield-halved text-base"></i>
+                    <span class="text-[10px] font-medium" data-i18n="admin">ผู้ดูแล</span>
+                </button>
+                <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-full transition-all text-slate-500 dark:text-slate-400">
+                    <i class="fa-solid fa-user text-base"></i>
+                    <span class="text-[10px] font-medium" data-i18n="profile">โปรไฟล์</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toast" class="fixed top-20 right-4 z-50 transition-all duration-300 transform translate-x-full opacity-0">
+        <div id="toastContent" class="px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-sm font-medium flex items-center gap-2">
+            <i id="toastIcon" class="fa-solid fa-circle-check"></i>
+            <span id="toastMsg">ดำเนินการสำเร็จ</span>
+        </div>
+    </div>
+
+    <!-- Proof Modal Viewer -->
+    <div id="proofModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300">
+        <div class="glass-panel rounded-3xl p-6 max-w-lg w-full max-h-[90vh] flex flex-col gap-4 shadow-2xl relative overflow-hidden">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                <div>
+                    <h3 id="modalTitle" class="font-bold text-lg text-slate-900 dark:text-white">หลักฐานการทำรายการ</h3>
+                    <p id="modalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+                </div>
+                <button onclick="closeProofModal()" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-auto flex items-center justify-center bg-slate-950/40 rounded-2xl p-2 border border-black/10 dark:border-white/10 min-h-[250px]">
+                <img id="modalImg" src="" alt="Proof Document" class="max-h-[55vh] w-auto object-contain rounded-xl shadow-md" />
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="downloadProof()" class="flex-1 px-4 py-2.5 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/20 font-medium text-sm flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-download text-brand-pink"></i> <span data-i18n="download">ดาวน์โหลดสลิป</span>
+                </button>
+                <button onclick="closeProofModal()" class="flex-1 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-medium text-sm flex items-center justify-center gap-2 transition-all shadow-md">
+                    <span data-i18n="close">ปิดหน้าต่าง</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // --- Localization Dictionary ---
+        const dict = {
+            th: {
+                loginTitle: "LDC14 Wallet",
+                loginSubtitle: "เข้าสู่ระบบด้วยบัญชีมหาวิทยาลัยกรุงเทพ (@bumail.net / @bu.ac.th)",
+                emailInputLabel: "อีเมลมหาวิทยาลัยกรุงเทพ",
+                passwordInputLabel: "รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)",
+                loginTabBtn: "เข้าสู่ระบบ",
+                registerTabBtn: "ลงทะเบียนใหม่",
+                loginSubmitBtn: "เข้าสู่ระบบ",
+                registerSubmitBtn: "ถัดไป (ตั้งค่าโปรไฟล์)",
+                onboardingTitle: "ลงทะเบียนสมาชิก LDC14",
+                name: "ชื่อจริง",
+                surname: "นามสกุล",
+                nickname: "ชื่อเล่น",
+                studentId: "รหัสนักศึกษา (บังคับ 10 หลัก)",
+                photoUrl: "รูปโปรไฟล์ (อัปโหลดรูปภาพ)",
+                saveProfile: "บันทึกข้อมูลส่วนตัว",
+                dashboard: "หน้าหลัก",
+                expenses: "ค่าใช้จ่าย",
+                approvals: "อนุมัติ",
+                admin: "ผู้ดูแล",
+                profile: "โปรไฟล์",
+                totalBalance: "งบกองกลางปัจจุบัน",
+                totalExpenses: "ค่าใช้จ่ายทั้งหมด",
+                addFunds: "แจ้งโอนเงินเข้ากองกลาง",
+                amount: "จำนวนเงิน (บาท)",
+                slipUrl: "สลิปโอนเงิน (อัปโหลดรูป)",
+                submit: "ยืนยันการทำรายการ",
+                cancel: "ยกเลิก",
+                pending: "รออนุมัติ",
+                approved: "อนุมัติแล้ว",
+                rejected: "ปฏิเสธ",
+                requestReimbursement: "ขอเบิกค่าใช้จ่าย",
+                reason: "ชื่องาน / เหตุผลการเบิกจ่าย",
+                uploadProof: "อัปโหลดหลักฐานการจ่าย",
+                approve: "อนุมัติ",
+                reject: "ปฏิเสธ",
+                history: "ประวัติการชำระเงินส่วนตัว",
+                contributions: "ยอดเงินโอนเข้าทั้งหมด",
+                refunds: "ยอดเงินคืนทั้งหมด",
+                manageRoles: "จัดการตำแหน่งสมาชิก",
+                treasurer: "เหรัญญิก",
+                member: "สมาชิก",
+                issueRefund: "คืนเงินให้สมาชิก",
+                success: "ดำเนินการสำเร็จ",
+                error: "เกิดข้อผิดพลาด",
+                require10Digits: "รหัสนักศึกษาต้องเป็นตัวเลข 10 หลักเท่านั้น",
+                requireBUEmail: "ต้องใช้อีเมลมหาวิทยาลัยกรุงเทพเท่านั้น (@bumail.net หรือ @bu.ac.th)",
+                invalidPassword: "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษรตามสากล",
+                userNotFound: "ไม่พบบัญชีนี้ กรุณาลงทะเบียนใหม่",
+                wrongPassword: "รหัสผ่านไม่ถูกต้อง",
+                emailExists: "อีเมลนี้ถูกลงทะเบียนไว้แล้ว กรุณาเข้าสู่ระบบ",
+                deposit: "ฝากเงินกองกลาง",
+                expense: "เบิกค่าใช้จ่าย",
+                refund: "รับเงินคืน",
+                uploadImage: "คลิกเพื่ออัปโหลดรูปภาพ",
+                refundSlipUrl: "สลิปคืนเงิน (อัปโหลดรูปภาพ)",
+                movementHistory: "ประวัติการเคลื่อนไหวเงินกองกลาง",
+                noActivity: "ยังไม่มีประวัติการทำรายการ",
+                pendingDeposits: "คำขอเงินเข้ากองกลาง (ฝากเงิน)",
+                pendingExpenses: "คำขอเงินออกกองกลาง (เบิกจ่าย)",
+                viewProof: "ดูหลักฐาน",
+                proofTitle: "หลักฐานการทำรายการ",
+                download: "ดาวน์โหลดสลิป",
+                close: "ปิดหน้าต่าง",
+                editProfile: "แก้ไขโปรไฟล์",
+                editProfileTitle: "ปรับแต่งข้อมูลโปรไฟล์",
+                targetMember: "เลือกสมาชิกที่ต้องการคืนเงิน",
+                firstUserNotice: "คุณเป็นผู้ใช้งานคนแรกของระบบ จึงได้รับสิทธิ์ 'เหรัญญิกและผู้ดูแลระบบ' โดยอัตโนมัติ"
+            },
+            en: {
+                loginTitle: "LDC14 Wallet",
+                loginSubtitle: "Sign in with Bangkok University account (@bumail.net / @bu.ac.th)",
+                emailInputLabel: "Bangkok University Email",
+                passwordInputLabel: "Password (Min 8 characters)",
+                loginTabBtn: "Sign In",
+                registerTabBtn: "Register",
+                loginSubmitBtn: "Sign In",
+                registerSubmitBtn: "Next (Profile Setup)",
+                onboardingTitle: "LDC14 Registration",
+                name: "First Name",
+                surname: "Last Name",
+                nickname: "Nickname",
+                studentId: "Student ID (10 digits required)",
+                photoUrl: "Profile Picture (Upload)",
+                saveProfile: "Save Profile Information",
+                dashboard: "Dashboard",
+                expenses: "Expenses",
+                approvals: "Approvals",
+                admin: "Admin",
+                profile: "Profile",
+                totalBalance: "Current Total Fund",
+                totalExpenses: "Total Expenses Payout",
+                addFunds: "Deposit to Fund",
+                amount: "Amount (THB)",
+                slipUrl: "Transfer Slip (Upload)",
+                submit: "Submit Transaction",
+                cancel: "Cancel",
+                pending: "Pending",
+                approved: "Approved",
+                rejected: "Rejected",
+                requestReimbursement: "Request Reimbursement",
+                reason: "Event Title / Reason",
+                uploadProof: "Upload Receipt Proof",
+                approve: "Approve",
+                reject: "Reject",
+                history: "Personal Payment History",
+                contributions: "Total Contributions",
+                refunds: "Total Refunds Received",
+                manageRoles: "Manage Member Roles",
+                treasurer: "Treasurer",
+                member: "Member",
+                issueRefund: "Issue Member Refund",
+                success: "Operation Successful",
+                error: "An error occurred",
+                require10Digits: "Student ID must be exactly 10 digits",
+                requireBUEmail: "Must use a valid BU Email (@bumail.net or @bu.ac.th)",
+                invalidPassword: "Password must be at least 8 characters long",
+                userNotFound: "Account not found. Please register.",
+                wrongPassword: "Incorrect password",
+                emailExists: "Email already registered. Please sign in.",
+                deposit: "Fund Deposit",
+                expense: "Fund Expense",
+                refund: "Fund Refund",
+                uploadImage: "Click to upload image",
+                refundSlipUrl: "Refund Slip (Upload Image)",
+                movementHistory: "Central Fund Activity Log",
+                noActivity: "No recent financial activity",
+                pendingDeposits: "Pending Deposit Requests",
+                pendingExpenses: "Pending Expense Claims",
+                viewProof: "View Proof",
+                proofTitle: "Transaction Slip & Proof",
+                download: "Download Slip",
+                close: "Close Window",
+                editProfile: "Edit Profile",
+                editProfileTitle: "Edit Profile Information",
+                targetMember: "Select Member for Refund",
+                firstUserNotice: "As the first user, you are automatically assigned as Treasurer & Admin."
+            }
+        };
+
+        // --- State Management ---
+        let state = {
+            lang: 'th',
+            theme: 'dark',
+            currentUser: null,
+            users: [],
+            transactions: [],
+            activeTab: 'dashboard'
+        };
+
+        // Initialize App Data from LocalStorage (Simulation Database)
+        function initData() {
+            const savedUsers = localStorage.getItem('ldc14_users');
+            const savedTrans = localStorage.getItem('ldc14_transactions');
+            const savedUser = localStorage.getItem('ldc14_session');
+            
+            if (savedUsers) state.users = JSON.parse(savedUsers);
+            if (savedTrans) state.transactions = JSON.parse(savedTrans);
+            if (savedUser) state.currentUser = JSON.parse(savedUser);
+
+            // Apply Theme
+            document.documentElement.className = state.theme;
+            updateThemeIcon();
+            render();
+        }
+
+        function saveData() {
+            localStorage.setItem('ldc14_users', JSON.stringify(state.users));
+            localStorage.setItem('ldc14_transactions', JSON.stringify(state.transactions));
+            if (state.currentUser) {
+                localStorage.setItem('ldc14_session', JSON.stringify(state.currentUser));
+            } else {
+                localStorage.removeItem('ldc14_session');
+            }
+        }
+
+        // --- Theme & Language Toggles ---
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.className = state.theme;
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const icon = document.getElementById('themeIcon');
+            if (state.theme === 'dark') {
+                icon.className = 'fa-solid fa-sun text-brand-gold';
+            } else {
+                icon.className = 'fa-solid fa-moon text-[#8E3C77]';
+            }
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'th' ? 'en' : 'th';
+            document.getElementById('langLabel').innerText = state.lang.toUpperCase();
+            render();
+        }
+
+        const t = (key) => dict[state.lang][key] || key;
+
+        // --- Toast Notification ---
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastContent = document.getElementById('toastContent');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMsg = document.getElementById('toastMsg');
+
+            toastMsg.innerText = msg;
+            if (type === 'error') {
+                toastContent.className = "px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-sm font-medium flex items-center gap-2 bg-rose-500/20 border-rose-500/30 text-rose-600 dark:text-rose-300";
+                toastIcon.className = "fa-solid fa-circle-xmark";
+            } else {
+                toastContent.className = "px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border text-sm font-medium flex items-center gap-2 bg-emerald-500/20 border-emerald-500/30 text-emerald-600 dark:text-emerald-300";
+                toastIcon.className = "fa-solid fa-circle-check";
+            }
+
+            toast.classList.remove('translate-x-full', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+            }, 3000);
+        }
+
+        // --- Authentication Flow ---
+        let authMode = 'login'; // 'login' or 'register'
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            const tabLogin = document.getElementById('authTabLogin');
+            const tabRegister = document.getElementById('authTabRegister');
+            const submitBtnText = document.getElementById('authSubmitText');
+
+            if (mode === 'login') {
+                tabLogin.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md";
+                tabRegister.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200";
+                if (submitBtnText) submitBtnText.innerText = t('loginSubmitBtn');
+            } else {
+                tabRegister.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md";
+                tabLogin.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200";
+                if (submitBtnText) submitBtnText.innerText = t('registerSubmitBtn');
+            }
+        }
+
+        function handleEmailAuth(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('authEmail').value.trim().toLowerCase();
+            const passwordInput = document.getElementById('authPassword').value;
+
+            // Validate BU Email domain specifically for @bumail.net and @bu.ac.th
+            if (!emailInput.endsWith('@bumail.net') && !emailInput.endsWith('@bu.ac.th')) {
+                showToast(t('requireBUEmail'), 'error');
+                return;
+            }
+
+            // Enforce minimum 8 characters password
+            if (!passwordInput || passwordInput.length < 8) {
+                showToast(t('invalidPassword'), 'error');
+                return;
+            }
+
+            const existingUser = state.users.find(u => u.email === emailInput);
+
+            if (authMode === 'login') {
+                if (!existingUser) {
+                    showToast(t('userNotFound'), 'error');
+                    return;
+                }
+                if (existingUser.password !== passwordInput) {
+                    showToast(t('wrongPassword'), 'error');
+                    return;
+                }
+                state.currentUser = existingUser;
+                saveData();
+                showToast(t('success'));
+                render();
+            } else {
+                // Register Mode
+                if (existingUser) {
+                    showToast(t('emailExists'), 'error');
+                    return;
+                }
+                // Stage temporary user for onboarding profile setup
+                state.currentUser = {
+                    uid: 'user_' + Date.now(),
+                    email: emailInput,
+                    password: passwordInput,
+                    isSetup: false
+                };
+                saveData();
+                showToast(t('success'));
+                render();
+            }
+        }
+
+        function logout() {
+            state.currentUser = null;
+            state.activeTab = 'dashboard';
+            saveData();
+            showToast(t('success'));
+            render();
+        }
+
+        // --- Navigation ---
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            render();
+        }
+
+        function updateNavState() {
+            const bottomNav = document.getElementById('bottomNav');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const navApprovals = document.getElementById('nav-approvals');
+            const navAdmin = document.getElementById('nav-admin');
+
+            if (!state.currentUser || !state.currentUser.isSetup) {
+                bottomNav.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+                return;
+            }
+
+            bottomNav.classList.remove('hidden');
+            logoutBtn.classList.remove('hidden');
+
+            const isTreasurer = state.currentUser.role === 'treasurer';
+            if (isTreasurer) {
+                navApprovals.classList.remove('hidden');
+                navApprovals.classList.add('flex');
+                navAdmin.classList.remove('hidden');
+                navAdmin.classList.add('flex');
+            } else {
+                navApprovals.classList.add('hidden');
+                navApprovals.classList.remove('flex');
+                navAdmin.classList.add('hidden');
+                navAdmin.classList.remove('flex');
+            }
+
+            // Highlight active button
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-brand-pink', 'to-brand-pinkLight', 'text-white', 'shadow-lg', 'scale-105');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`nav-${state.activeTab}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+                activeBtn.classList.add('bg-gradient-to-r', 'from-brand-pink', 'to-brand-pinkLight', 'text-white', 'shadow-lg', 'scale-105');
+            }
+        }
+
+        // --- Proof Viewer Modal ---
+        let currentModalProof = null;
+        function openProofModal(imgUrl, title, subtitle) {
+            currentModalProof = imgUrl;
+            document.getElementById('modalImg').src = imgUrl;
+            document.getElementById('modalTitle').innerText = title || t('proofTitle');
+            document.getElementById('modalSubtitle').innerText = subtitle || '';
+            document.getElementById('proofModal').classList.remove('hidden');
+        }
+
+        function closeProofModal() {
+            document.getElementById('proofModal').classList.add('hidden');
+        }
+
+        function downloadProof() {
+            if (!currentModalProof) return;
+            const link = document.createElement('a');
+            link.href = currentModalProof;
+            link.download = `ldc14-proof-${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- Render Main Interface ---
+        function render() {
+            const container = document.getElementById('mainContainer');
+            updateNavState();
+
+            // 1. Not Logged In Screen
+            if (!state.currentUser) {
+                container.innerHTML = renderLoginScreen();
+                return;
+            }
+
+            // 2. Onboarding Screen
+            if (!state.currentUser.isSetup) {
+                container.innerHTML = renderOnboardingScreen();
+                return;
+            }
+
+            // 3. Tab Navigation Routing
+            switch (state.activeTab) {
+                case 'dashboard':
+                    container.innerHTML = renderDashboardView();
+                    break;
+                case 'expenses':
+                    container.innerHTML = renderExpensesView();
+                    break;
+                case 'approvals':
+                    container.innerHTML = renderApprovalsView();
+                    break;
+                case 'admin':
+                    container.innerHTML = renderAdminView();
+                    break;
+                case 'profile':
+                    container.innerHTML = renderProfileView();
+                    break;
+                default:
+                    container.innerHTML = renderDashboardView();
+            }
+
+            // Re-apply static i18n text if present
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[state.lang][key]) el.innerText = dict[state.lang][key];
+            });
+        }
+
+        // --- View Components ---
+
+        // 1. Login View
+        function renderLoginScreen() {
+            return `
+                <div class="flex flex-col items-center justify-center min-h-[70vh] text-center px-2">
+                    <div class="glass-panel p-8 rounded-3xl max-w-sm w-full space-y-6 shadow-2xl">
+                        <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-brand-pink to-brand-gold flex items-center justify-center text-white shadow-xl shadow-brand-pink/30 animate-bounce">
+                            <i class="fa-solid fa-crown text-3xl"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <h2 class="text-2xl font-extrabold bg-gradient-to-r from-brand-pink to-brand-gold bg-clip-text text-transparent">
+                                ${t('loginTitle')}
+                            </h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                                ${t('loginSubtitle')}
+                            </p>
+                        </div>
+
+                        <!-- Auth Mode Tabs -->
+                        <div class="p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-950/50 flex gap-1 border border-white/20">
+                            <button id="authTabLogin" onclick="setAuthMode('login')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all ${authMode === 'login' ? 'bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md' : 'text-slate-500 dark:text-slate-400'}">
+                                ${t('loginTabBtn')}
+                            </button>
+                            <button id="authTabRegister" onclick="setAuthMode('register')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all ${authMode === 'register' ? 'bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md' : 'text-slate-500 dark:text-slate-400'}">
+                                ${t('registerTabBtn')}
+                            </button>
+                        </div>
+
+                        <!-- Email & Password Form -->
+                        <form onsubmit="handleEmailAuth(event)" class="space-y-4 text-left">
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">
+                                    <i class="fa-solid fa-envelope text-brand-pink mr-1"></i> ${t('emailInputLabel')}
+                                </label>
+                                <input type="email" id="authEmail" required placeholder="name.sur@bumail.net" class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">
+                                    <i class="fa-solid fa-lock text-brand-pink mr-1"></i> ${t('passwordInputLabel')}
+                                </label>
+                                <input type="password" id="authPassword" required placeholder="••••••••" minlength="8" class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink transition-all">
+                            </div>
+
+                            <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-sm shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-all flex items-center justify-center gap-2 mt-2">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                                <span id="authSubmitText">${authMode === 'login' ? t('loginSubmitBtn') : t('registerSubmitBtn')}</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 2. Onboarding View
+        function renderOnboardingScreen() {
+            const isFirst = state.users.length === 0;
+            return `
+                <div class="max-w-md mx-auto">
+                    <div class="glass-panel p-6 rounded-3xl space-y-5 shadow-2xl">
+                        <div class="text-center space-y-1">
+                            <h2 class="text-xl font-bold">${t('onboardingTitle')}</h2>
+                            <p class="text-xs text-slate-500">${state.currentUser.email}</p>
+                        </div>
+
+                        ${isFirst ? `
+                            <div class="p-3.5 rounded-2xl bg-brand-gold/15 border border-brand-gold/30 text-amber-800 dark:text-amber-300 text-xs flex items-center gap-3">
+                                <i class="fa-solid fa-crown text-brand-gold text-lg shrink-0"></i>
+                                <span>${t('firstUserNotice')}</span>
+                            </div>
+                        ` : ''}
+
+                        <form onsubmit="saveProfileOnboarding(event)" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs font-semibold mb-1 block">${t('name')}</label>
+                                    <input type="text" id="onb_name" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold mb-1 block">${t('surname')}</label>
+                                    <input type="text" id="onb_surname" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('nickname')}</label>
+                                <input type="text" id="onb_nickname" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('studentId')}</label>
+                                <input type="text" id="onb_studentId" pattern="\\d{10}" maxLength="10" placeholder="166010xxxx" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('photoUrl')}</label>
+                                <input type="file" id="onb_photoFile" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'onb_photoPreview')">
+                                <label for="onb_photoFile" class="cursor-pointer block p-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
+                                    <div id="onb_photoPreview" class="flex flex-col items-center gap-2">
+                                        <i class="fa-solid fa-camera text-slate-400 text-xl"></i>
+                                        <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-sm shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-all mt-4">
+                                ${t('saveProfile')}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        let uploadedImageTemp = '';
+        function handleImageUpload(event, previewId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                uploadedImageTemp = reader.result;
+                const container = document.getElementById(previewId);
+                if (container) {
+                    container.innerHTML = `
+                        <img src="${reader.result}" class="w-20 h-20 rounded-full object-cover shadow-md mx-auto" />
+                        <span class="text-[10px] text-emerald-500 font-semibold">อัปโหลดเรียบร้อย</span>
+                    `;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveProfileOnboarding(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('onb_studentId').value;
+            if (!/^\d{10}$/.test(studentId)) {
+                showToast(t('require10Digits'), 'error');
+                return;
+            }
+
+            const isFirst = state.users.length === 0;
+            const newUser = {
+                uid: state.currentUser.uid,
+                email: state.currentUser.email,
+                password: state.currentUser.password,
+                name: document.getElementById('onb_name').value,
+                surname: document.getElementById('onb_surname').value,
+                nickname: document.getElementById('onb_nickname').value,
+                studentId: studentId,
+                photoUrl: uploadedImageTemp || '',
+                role: isFirst ? 'treasurer' : 'member',
+                isSetup: true
+            };
+
+            state.currentUser = newUser;
+            state.users.push(newUser);
+            uploadedImageTemp = '';
+            saveData();
+            showToast(t('success'));
+            render();
+        }
+
+        // 3. Dashboard View
+        function renderDashboardView() {
+            const approvedDeposits = state.transactions
+                .filter(t => t.type === 'deposit' && t.status === 'approved')
+                .reduce((acc, t) => acc + Number(t.amount), 0);
+
+            const approvedExpenses = state.transactions
+                .filter(t => (t.type === 'expense' || t.type === 'refund') && t.status === 'approved')
+                .reduce((acc, t) => acc + Number(t.amount), 0);
+
+            const balance = approvedDeposits - approvedExpenses;
+
+            return `
+                <div class="space-y-6 animate-in fade-in duration-300">
+                    <!-- User Greeting Header -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold">สวัสดี, ${state.currentUser.nickname}! 👋</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">LDC14 Cheerleader Fund</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink dark:text-pink-300 border border-brand-pink/30 text-xs font-semibold uppercase">
+                            ${t(state.currentUser.role)}
+                        </span>
+                    </div>
+
+                    <!-- Financial Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-panel p-6 rounded-3xl relative overflow-hidden bg-gradient-to-br from-brand-pink/90 to-brand-pinkDark text-white shadow-xl">
+                            <i class="fa-solid fa-vault absolute top-0 right-0 p-6 text-9xl opacity-10 pointer-events-none"></i>
+                            <p class="text-xs font-medium text-pink-200 tracking-wider uppercase mb-1">${t('totalBalance')}</p>
+                            <h3 class="text-4xl font-extrabold tracking-tight">฿${balance.toLocaleString()}</h3>
+                            <div class="mt-6 flex justify-between items-center">
+                                <span class="text-xs bg-white/20 backdrop-blur-md px-3 py-1 rounded-full">LDC14 Vault</span>
+                                <button onclick="toggleDepositModal()" class="px-4 py-2 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldLight text-slate-900 font-bold text-xs shadow-lg hover:opacity-90 transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> ${t('addFunds')}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between shadow-xl">
+                            <div>
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 tracking-wider uppercase mb-1">${t('totalExpenses')}</p>
+                                <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">฿${approvedExpenses.toLocaleString()}</h3>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-between text-xs text-slate-500">
+                                <span>รายการอนุมัติทั้งหมด</span>
+                                <span class="font-bold text-rose-500">
+                                    ${state.transactions.filter(t => t.type === 'expense' && t.status === 'approved').length} รายการ
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deposit Modal Form -->
+                    <div id="depositFormDrawer" class="hidden glass-panel p-6 rounded-3xl animate-in zoom-in-95 duration-300">
+                        <h3 class="text-lg font-bold mb-4">${t('addFunds')}</h3>
+                        <form onsubmit="submitDeposit(event)" class="space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('amount')}</label>
+                                <input type="number" id="dep_amount" required placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('slipUrl')}</label>
+                                <input type="file" id="dep_slipFile" accept="image/*" required class="hidden" onchange="handleImageUpload(event, 'dep_slipPreview')">
+                                <label for="dep_slipFile" class="cursor-pointer block p-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
+                                    <div id="dep_slipPreview" class="flex flex-col items-center gap-2">
+                                        <i class="fa-solid fa-file-arrow-up text-slate-400 text-xl"></i>
+                                        <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" onclick="toggleDepositModal()" class="flex-1 py-3 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 text-sm font-medium">${t('cancel')}</button>
+                                <button type="submit" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white text-sm font-bold shadow-md">${t('submit')}</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Fund Activity Log -->
+                    <div class="mt-8 space-y-4">
+                        <h3 class="text-lg font-bold">${t('movementHistory')}</h3>
+                        <div class="space-y-3">
+                            ${state.transactions.length === 0 ? `<p class="text-slate-500 text-center py-6 text-sm">${t('noActivity')}</p>` : ''}
+                            ${state.transactions.map(tx => {
+                                const reqUser = state.users.find(u => u.uid === (tx.requestedBy || tx.targetUser));
+                                const imgProof = tx.slipUrl || tx.proofUrl;
+                                return `
+                                    <div class="glass-card p-4 rounded-2xl flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between shadow-sm">
+                                        <div class="flex items-center gap-3">
+                                            <div class="p-3 rounded-2xl shrink-0 ${
+                                                tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                                                tx.type === 'expense' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400' :
+                                                'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                            }">
+                                                <i class="fa-solid ${tx.type === 'deposit' ? 'fa-arrow-down-left' : 'fa-arrow-up-right'} text-base"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-semibold text-sm">
+                                                    ${t(tx.type)}
+                                                    ${tx.description ? ` - ${tx.description}` : ''}
+                                                </p>
+                                                <div class="flex items-center gap-2 mt-0.5">
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                                                        ${reqUser ? reqUser.nickname : 'Unassigned'} • <span class="capitalize">${t(tx.status)}</span>
+                                                    </p>
+                                                    ${imgProof ? `
+                                                        <button onclick="openProofModal('${imgProof}', '${t(tx.type)} - ฿${Number(tx.amount).toLocaleString()}', 'สมาชิก: ${reqUser ? reqUser.name : ''}')" class="text-[10px] px-2 py-0.5 rounded-full bg-brand-pink/15 text-brand-pink dark:text-pink-300 border border-brand-pink/30 flex items-center gap-1 hover:bg-brand-pink/30 transition-colors font-medium">
+                                                            <i class="fa-solid fa-eye text-[10px]"></i> ${t('viewProof')}
+                                                        </button>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="font-bold text-sm ${
+                                            tx.type === 'deposit' ? 'text-emerald-500' : 
+                                            tx.status === 'rejected' ? 'text-slate-400 line-through' :
+                                            'text-rose-500'
+                                        }">
+                                            ${tx.type === 'deposit' ? '+' : '-'}฿${Number(tx.amount).toLocaleString()}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleDepositModal() {
+            const el = document.getElementById('depositFormDrawer');
+            if (el) el.classList.toggle('hidden');
+        }
+
+        function submitDeposit(e) {
+            e.preventDefault();
+            const amount = document.getElementById('dep_amount').value;
+            if (!amount || !uploadedImageTemp) {
+                showToast("กรุณากรอกข้อมูลและอัปโหลดสลิปให้ครบถ้วน", "error");
+                return;
+            }
+
+            const newTx = {
+                id: 'tx_' + Date.now(),
+                type: 'deposit',
+                amount: Number(amount),
+                slipUrl: uploadedImageTemp,
+                status: 'pending',
+                requestedBy: state.currentUser.uid,
+                createdAt: new Date().toISOString()
+            };
+
+            state.transactions.unshift(newTx);
+            uploadedImageTemp = '';
+            saveData();
+            showToast(t('success'));
+            render();
+        }
+
+        // 4. Expenses View
+        function renderExpensesView() {
+            const expenses = state.transactions.filter(t => t.type === 'expense');
+            return `
+                <div class="space-y-6 animate-in fade-in duration-300">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold">${t('expenses')}</h2>
+                        <button onclick="toggleExpenseDrawer()" class="px-4 py-2 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-xs font-semibold flex items-center gap-2">
+                            <i class="fa-solid fa-plus text-brand-pink"></i> ${t('requestReimbursement')}
+                        </button>
+                    </div>
+
+                    <div id="expenseDrawer" class="hidden glass-panel p-6 rounded-3xl animate-in zoom-in-95 duration-300">
+                        <form onsubmit="submitExpenseClaim(event)" class="space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('reason')}</label>
+                                <input type="text" id="exp_reason" required placeholder="เช่น ค่าพร็อพ / ค่าชุดลีด" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('amount')}</label>
+                                <input type="number" id="exp_amount" required placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" onclick="toggleExpenseDrawer()" class="flex-1 py-3 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-sm font-medium">${t('cancel')}</button>
+                                <button type="submit" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white text-sm font-bold">${t('submit')}</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${expenses.length === 0 ? `<p class="text-slate-500 text-center py-12 text-sm">ไม่มีรายการเบิกจ่าย</p>` : ''}
+                        ${expenses.map(tx => {
+                            const reqUser = state.users.find(u => u.uid === tx.requestedBy);
+                            return `
+                                <div class="glass-panel p-5 rounded-3xl flex flex-col sm:flex-row gap-4 justify-between">
+                                    <div class="flex gap-4">
+                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
+                                            tx.status === 'approved' ? 'bg-emerald-500/10 text-emerald-600' :
+                                            tx.status === 'rejected' ? 'bg-rose-500/10 text-rose-600' :
+                                            'bg-amber-500/10 text-amber-600'
+                                        }">
+                                            <i class="fa-solid fa-receipt text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-base">${tx.description}</h4>
+                                            <p class="text-xs text-slate-500">
+                                                โดย ${reqUser ? reqUser.nickname : 'Unassigned'} • ฿${Number(tx.amount).toLocaleString()}
+                                            </p>
+                                            <div class="mt-2 flex items-center gap-2">
+                                                <span class="text-[10px] px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider ${
+                                                    tx.status === 'approved' ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' :
+                                                    tx.status === 'rejected' ? 'bg-rose-500/20 text-rose-700 dark:text-rose-400' :
+                                                    'bg-amber-500/20 text-amber-700 dark:text-amber-400'
+                                                }">
+                                                    ${t(tx.status)}
+                                                </span>
+                                                ${tx.proofUrl ? `
+                                                    <button onclick="openProofModal('${tx.proofUrl}', '${tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="text-[10px] px-2.5 py-0.5 rounded-full bg-brand-pink/20 text-brand-pink dark:text-pink-300 font-medium flex items-center gap-1">
+                                                        <i class="fa-solid fa-eye text-[10px]"></i> ${t('viewProof')}
+                                                    </button>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex sm:flex-col gap-2 justify-center">
+                                        ${tx.status === 'approved' && tx.requestedBy === state.currentUser.uid && !tx.proofUrl ? `
+                                            <input type="file" id="proofFile_${tx.id}" accept="image/*" class="hidden" onchange="uploadExpenseProof(event, '${tx.id}')">
+                                            <label for="proofFile_${tx.id}" class="cursor-pointer px-4 py-2 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                                <i class="fa-solid fa-upload text-brand-pink"></i> ${t('uploadProof')}
+                                            </label>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleExpenseDrawer() {
+            const el = document.getElementById('expenseDrawer');
+            if (el) el.classList.toggle('hidden');
+        }
+
+        function submitExpenseClaim(e) {
+            e.preventDefault();
+            const reason = document.getElementById('exp_reason').value;
+            const amount = document.getElementById('exp_amount').value;
+
+            const newTx = {
+                id: 'tx_' + Date.now(),
+                type: 'expense',
+                amount: Number(amount),
+                description: reason,
+                status: 'pending',
+                requestedBy: state.currentUser.uid,
+                createdAt: new Date().toISOString()
+            };
+
+            state.transactions.unshift(newTx);
+            saveData();
+            showToast(t('success'));
+            render();
+        }
+
+        function uploadExpenseProof(event, txId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const tx = state.transactions.find(t => t.id === txId);
+                if (tx) {
+                    tx.proofUrl = reader.result;
+                    saveData();
+                    showToast(t('success'));
+                    render();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 5. Treasurer Approvals View
+        function renderApprovalsView() {
+            const pendingDeposits = state.transactions.filter(t => t.type === 'deposit' && t.status === 'pending');
+            const pendingExpenses = state.transactions.filter(t => t.type === 'expense' && t.status === 'pending');
+
+            return `
+                <div class="space-y-6 animate-in fade-in duration-300">
+                    <h2 class="text-xl font-bold">${t('approvals')}</h2>
+
+                    <!-- Pending Deposits -->
+                    <div>
+                        <h3 class="text-sm font-bold mb-3 flex items-center gap-2 text-emerald-500">
+                            <i class="fa-solid fa-arrow-down-left"></i> ${t('pendingDeposits')}
+                        </h3>
+                        <div class="space-y-3">
+                            ${pendingDeposits.length === 0 ? `<p class="text-slate-500 text-xs py-2">ไม่มีรายการรออนุมัติ</p>` : ''}
+                            ${pendingDeposits.map(tx => renderApprovalCard(tx)).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Pending Expenses -->
+                    <div class="pt-4">
+                        <h3 class="text-sm font-bold mb-3 flex items-center gap-2 text-amber-500">
+                            <i class="fa-solid fa-arrow-up-right"></i> ${t('pendingExpenses')}
+                        </h3>
+                        <div class="space-y-3">
+                            ${pendingExpenses.length === 0 ? `<p class="text-slate-500 text-xs py-2">ไม่มีรายการรออนุมัติ</p>` : ''}
+                            ${pendingExpenses.map(tx => renderApprovalCard(tx)).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderApprovalCard(tx) {
+            const reqUser = state.users.find(u => u.uid === tx.requestedBy);
+            const slip = tx.slipUrl || tx.proofUrl;
+            return `
+                <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center shadow-md">
+                    <div class="flex gap-3 items-center">
+                        <div class="p-3 rounded-2xl bg-amber-500/10 text-amber-600">
+                            <i class="fa-solid fa-clock text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm">${tx.type === 'deposit' ? t('deposit') : tx.description}</h4>
+                            <p class="text-xs text-slate-500">
+                                ${reqUser ? `${reqUser.name} (${reqUser.nickname})` : 'Unknown'} • ฿${Number(tx.amount).toLocaleString()}
+                            </p>
+                            ${slip ? `
+                                <button onclick="openProofModal('${slip}', '${tx.type === 'deposit' ? t('deposit') : tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="mt-1 text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
+                                    <i class="fa-solid fa-eye text-[10px]"></i> ${t('viewProof')}
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="updateTxStatus('${tx.id}', 'approved')" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold shadow-md hover:bg-emerald-600 transition-all">
+                            <i class="fa-solid fa-check"></i> ${t('approve')}
+                        </button>
+                        <button onclick="updateTxStatus('${tx.id}', 'rejected')" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold shadow-md hover:bg-rose-600 transition-all">
+                            <i class="fa-solid fa-xmark"></i> ${t('reject')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateTxStatus(txId, status) {
+            const tx = state.transactions.find(t => t.id === txId);
+            if (tx) {
+                tx.status = status;
+                saveData();
+                showToast(t('success'));
+                render();
+            }
+        }
+
+        // 6. Admin Management View
+        function renderAdminView() {
+            return `
+                <div class="space-y-6 animate-in fade-in duration-300">
+                    <h2 class="text-xl font-bold">${t('admin')}</h2>
+
+                    <!-- Treasurer Refund Tool -->
+                    <div class="glass-panel p-6 rounded-3xl space-y-4">
+                        <h3 class="text-base font-bold">${t('issueRefund')}</h3>
+                        <form onsubmit="submitRefund(event)" class="space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('targetMember')}</label>
+                                <select id="ref_target" required class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                                    <option value="">-- เลือกสมาชิก --</option>
+                                    ${state.users.map(u => `
+                                        <option value="${u.uid}">${u.name} ${u.surname} (${u.nickname}) - ${u.studentId}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('amount')}</label>
+                                <input type="number" id="ref_amount" required placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-pink">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold mb-1 block">${t('refundSlipUrl')}</label>
+                                <input type="file" id="ref_slipFile" accept="image/*" required class="hidden" onchange="handleImageUpload(event, 'ref_slipPreview')">
+                                <label for="ref_slipFile" class="cursor-pointer block p-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-brand-pink transition-all text-center">
+                                    <div id="ref_slipPreview" class="flex flex-col items-center gap-2">
+                                        <i class="fa-solid fa-file-invoice-dollar text-slate-400 text-xl"></i>
+                                        <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldDark text-slate-900 font-bold text-sm shadow-md">
+                                ${t('submit')}
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Member Role Manager -->
+                    <div class="space-y-3">
+                        <h3 class="text-base font-bold">${t('manageRoles')}</h3>
+                        ${state.users.map(u => `
+                            <div class="glass-panel p-4 rounded-2xl flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
+                                        ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover"/>` : `<i class="fa-solid fa-user text-slate-400 p-2.5"></i>`}
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm">${u.name} ${u.surname} (${u.nickname})</p>
+                                        <p class="text-xs text-slate-500">${u.studentId}</p>
+                                    </div>
+                                </div>
+                                <select onchange="changeUserRole('${u.uid}', this.value)" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+                                    <option value="member" ${u.role === 'member' ? 'selected' : ''}>${t('member')}</option>
+                                    <option value="treasurer" ${u.role === 'treasurer' ? 'selected' : ''}>${t('treasurer')}</option>
+                                </select>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function submitRefund(e) {
+            e.preventDefault();
+            const target = document.getElementById('ref_target').value;
+            const amount = document.getElementById('ref_amount').value;
+
+            if (!target || !amount || !uploadedImageTemp) {
+                showToast("กรุณากรอกข้อมูลและอัปโหลดสลิปคืนเงินให้ครบถ้วน", "error");
+                return;
+            }
+
+            const newTx = {
+                id: 'tx_' + Date.now(),
+                type: 'refund',
+                amount: Number(amount),
+                targetUser: target,
+                slipUrl: uploadedImageTemp,
+                status: 'approved',
+                issuedBy: state.currentUser.uid,
+                createdAt: new Date().toISOString()
+            };
+
+            state.transactions.unshift(newTx);
+            uploadedImageTemp = '';
+            saveData();
+            showToast(t('success'));
+            render();
+        }
+
+        function changeUserRole(uid, role) {
+            const u = state.users.find(usr => usr.uid === uid);
+            if (u) {
+                u.role = role;
+                if (state.currentUser.uid === uid) state.currentUser.role = role;
+                saveData();
+                showToast(t('success'));
+                render();
+            }
+        }
+
+        // 7. Profile & Edit Profile View
+        let isEditingProfile = false;
+        function renderProfileView() {
+            const u = state.currentUser;
+            const myTx = state.transactions.filter(t => t.requestedBy === u.uid || t.targetUser === u.uid);
+            const myContrib = myTx.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((acc, t) => acc + Number(t.amount), 0);
+            const myRefunds = myTx.filter(t => t.type === 'refund' && t.status === 'approved').reduce((acc, t) => acc + Number(t.amount), 0);
+
+            return `
+                <div class="space-y-6 animate-in fade-in duration-300">
+                    <div class="glass-panel p-6 rounded-3xl relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-brand-pink/40 to-brand-gold/40"></div>
+                        <div class="relative flex flex-col sm:flex-row gap-5 items-center sm:items-start pt-4">
+                            <div class="w-24 h-24 rounded-full border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden shrink-0 bg-slate-200 flex items-center justify-center">
+                                ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover" />` : `<i class="fa-solid fa-user text-3xl text-slate-400"></i>`}
+                            </div>
+                            <div class="flex-1 text-center sm:text-left">
+                                <h2 class="text-xl font-bold">${u.name} ${u.surname} (${u.nickname})</h2>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${u.studentId}</p>
+                                <span class="inline-block mt-3 px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink dark:text-pink-300 text-xs font-semibold uppercase tracking-wider">
+                                    ${t(u.role)}
+                                </span>
+                            </div>
+                            <button onclick="toggleEditProfile()" class="px-4 py-2 rounded-2xl bg-white/50 dark:bg-white/10 border border-white/40 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-pen-to-square text-brand-pink"></i> ${isEditingProfile ? t('cancel') : t('editProfile')}
+                            </button>
+                        </div>
+
+                        ${isEditingProfile ? `
+                            <form onsubmit="saveProfileEdit(event)" class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 space-y-4 animate-in fade-in">
+                                <h3 class="font-bold text-sm">${t('editProfileTitle')}</h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-xs font-semibold mb-1 block">${t('name')}</label>
+                                        <input type="text" id="edit_name" value="${u.name}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-semibold mb-1 block">${t('surname')}</label>
+                                        <input type="text" id="edit_surname" value="${u.surname}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-xs font-semibold mb-1 block">${t('nickname')}</label>
+                                        <input type="text" id="edit_nickname" value="${u.nickname}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-semibold mb-1 block">${t('studentId')}</label>
+                                        <input type="text" id="edit_studentId" pattern="\\d{10}" maxLength="10" value="${u.studentId}" required class="w-full px-4 py-2 rounded-xl bg-white/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold mb-1 block">${t('photoUrl')}</label>
+                                    <input type="file" id="edit_photoFile" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'edit_photoPreview')">
+                                    <label for="edit_photoFile" class="cursor-pointer block p-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/20 text-center">
+                                        <div id="edit_photoPreview" class="flex flex-col items-center gap-1">
+                                            <i class="fa-solid fa-camera text-slate-400"></i>
+                                            <span class="text-xs text-slate-500">${t('uploadImage')}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white font-bold text-xs shadow-md">
+                                    ${t('saveProfile')}
+                                </button>
+                            </form>
+                        ` : ''}
+                    </div>
+
+                    <!-- Personal Metrics -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass-panel p-4 rounded-2xl text-center">
+                            <p class="text-xs text-slate-500 mb-1">${t('contributions')}</p>
+                            <h4 class="text-xl font-bold text-emerald-500">฿${myContrib.toLocaleString()}</h4>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl text-center">
+                            <p class="text-xs text-slate-500 mb-1">${t('refunds')}</p>
+                            <h4 class="text-xl font-bold text-brand-gold">฿${myRefunds.toLocaleString()}</h4>
+                        </div>
+                    </div>
+
+                    <!-- Individual History -->
+                    <div class="space-y-3">
+                        <h3 class="text-base font-bold">${t('history')}</h3>
+                        ${myTx.length === 0 ? `<p class="text-slate-500 text-xs text-center py-4">ไม่มีประวัติการชำระเงิน</p>` : ''}
+                        ${myTx.map(tx => {
+                            const slip = tx.slipUrl || tx.proofUrl;
+                            return `
+                                <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2.5 rounded-xl shrink-0 ${
+                                            tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-600' :
+                                            tx.type === 'expense' ? 'bg-rose-500/10 text-rose-600' :
+                                            'bg-amber-500/10 text-amber-600'
+                                        }">
+                                            <i class="fa-solid ${tx.type === 'deposit' ? 'fa-arrow-down-left' : 'fa-arrow-up-right'} text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-xs capitalize">${t(tx.type)}</p>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="text-[10px] text-slate-500 capitalize">${t(tx.status)}</span>
+                                                ${slip ? `
+                                                    <button onclick="openProofModal('${slip}', '${t(tx.type)} - ฿${Number(tx.amount).toLocaleString()}', 'สถานะ: ${t(tx.status)}')" class="text-[9px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
+                                                        <i class="fa-solid fa-eye text-[9px]"></i> ${t('viewProof')}
+                                                    </button>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="font-bold text-xs ${tx.type === 'expense' ? 'text-rose-500' : 'text-emerald-500'}">
+                                        ${tx.type === 'expense' ? '-' : '+'}฿${Number(tx.amount).toLocaleString()}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleEditProfile() {
+            isEditingProfile = !isEditingProfile;
+            render();
+        }
+
+        function saveProfileEdit(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('edit_studentId').value;
+            if (!/^\d{10}$/.test(studentId)) {
+                showToast(t('require10Digits'), 'error');
+                return;
+            }
+
+            const u = state.currentUser;
+            u.name = document.getElementById('edit_name').value;
+            u.surname = document.getElementById('edit_surname').value;
+            u.nickname = document.getElementById('edit_nickname').value;
+            u.studentId = studentId;
+            if (uploadedImageTemp) u.photoUrl = uploadedImageTemp;
+
+            // Update in users array
+            const idx = state.users.findIndex(usr => usr.uid === u.uid);
+            if (idx !== -1) state.users[idx] = { ...u };
+
+            uploadedImageTemp = '';
+            isEditingProfile = false;
+            saveData();
+            showToast(t('success'));
+            render();
+        }
+
+        // Start Application
+        window.addEventListener('DOMContentLoaded', initData);
+    </script>
+</body>
+</html>
