@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LDC14 Wallet - LDC Cheerleader 14th Management</title>
+    <title>LDC14 Wallet - LDC 14th Generation Management</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -134,7 +134,7 @@
                             LDC14 Wallet
                         </h1>
                         <p class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase mt-0.5">
-                            LDC Cheerleader 14th
+                            LDC 14th Generation
                         </p>
                     </div>
                 </div>
@@ -294,7 +294,7 @@
                 editProfile: "แก้ไขโปรไฟล์",
                 editProfileTitle: "ปรับแต่งข้อมูลโปรไฟล์",
                 targetMember: "เลือกสมาชิกที่ต้องการคืนเงิน",
-                firstUserNotice: "คุณเป็นผู้ใช้งานคนแรกของระบบ จึงได้รับสิทธิ์ 'เหรัญญิกและผู้ดูแลระบบ' โดยอัตโนมัติ"
+                registeredMembers: "รายชื่อสมาชิกทั้งหมดที่ลงทะเบียนแล้ว"
             },
             en: {
                 loginTitle: "LDC14 Wallet",
@@ -335,7 +335,7 @@
                 history: "Personal Payment History",
                 contributions: "Total Contributions",
                 refunds: "Total Refunds Received",
-                manageRoles: "Manage Member Roles",
+                manageRoles: "Manage Roles",
                 treasurer: "Treasurer",
                 member: "Member",
                 issueRefund: "Issue Member Refund",
@@ -363,9 +363,68 @@
                 editProfile: "Edit Profile",
                 editProfileTitle: "Edit Profile Information",
                 targetMember: "Select Member for Refund",
-                firstUserNotice: "As the first user, you are automatically assigned as Treasurer & Admin."
+                registeredMembers: "Registered Members Directory"
             }
         };
+
+        // --- Mock Initial Data for Preview Demo ---
+        const initialMockUsers = [
+            {
+                uid: 'user_admin_01',
+                email: 'admin.ldc@bumail.net',
+                password: 'password123',
+                name: 'สมชาย',
+                surname: 'ใจดี',
+                nickname: 'นัท',
+                studentId: '1660101234',
+                photoUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop',
+                role: 'treasurer',
+                isSetup: true
+            },
+            {
+                uid: 'user_member_02',
+                email: 'cheer.member@bumail.net',
+                password: 'password123',
+                name: 'อนันต์',
+                surname: 'รักดี',
+                nickname: 'ฟ้า',
+                studentId: '1660105678',
+                photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop',
+                role: 'member',
+                isSetup: true
+            }
+        ];
+
+        const initialMockTransactions = [
+            {
+                id: 'tx_01',
+                type: 'deposit',
+                amount: 1500,
+                slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop',
+                status: 'pending',
+                requestedBy: 'user_member_02',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'tx_02',
+                type: 'expense',
+                amount: 850,
+                description: 'ค่าอุปกรณ์ประกอบการซ้อม',
+                proofUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop',
+                status: 'pending',
+                requestedBy: 'user_member_02',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'tx_03',
+                type: 'deposit',
+                amount: 5000,
+                slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop',
+                status: 'approved',
+                requestedBy: 'user_admin_01',
+                createdAt: new Date().toISOString()
+            }
+        ];
 
         // --- State Management ---
         let state = {
@@ -383,9 +442,12 @@
             const savedTrans = localStorage.getItem('ldc14_transactions');
             const savedUser = localStorage.getItem('ldc14_session');
             
-            if (savedUsers) state.users = JSON.parse(savedUsers);
-            if (savedTrans) state.transactions = JSON.parse(savedTrans);
-            if (savedUser) state.currentUser = JSON.parse(savedUser);
+            state.users = savedUsers ? JSON.parse(savedUsers) : initialMockUsers;
+            state.transactions = savedTrans ? JSON.parse(savedTrans) : initialMockTransactions;
+            state.currentUser = savedUser ? JSON.parse(savedUser) : initialMockUsers[0]; // Default to Demo Admin User for instant preview
+
+            // Save back default mock if empty
+            if (!savedUsers) saveData();
 
             // Apply Theme
             document.documentElement.className = state.theme;
@@ -450,7 +512,7 @@
         }
 
         // --- Authentication Flow ---
-        let authMode = 'login'; // 'login' or 'register'
+        let authMode = 'login';
 
         function setAuthMode(mode) {
             authMode = mode;
@@ -474,13 +536,11 @@
             const emailInput = document.getElementById('authEmail').value.trim().toLowerCase();
             const passwordInput = document.getElementById('authPassword').value;
 
-            // Validate BU Email domain specifically for @bumail.net and @bu.ac.th
             if (!emailInput.endsWith('@bumail.net') && !emailInput.endsWith('@bu.ac.th')) {
                 showToast(t('requireBUEmail'), 'error');
                 return;
             }
 
-            // Enforce minimum 8 characters password
             if (!passwordInput || passwordInput.length < 8) {
                 showToast(t('invalidPassword'), 'error');
                 return;
@@ -502,12 +562,10 @@
                 showToast(t('success'));
                 render();
             } else {
-                // Register Mode
                 if (existingUser) {
                     showToast(t('emailExists'), 'error');
                     return;
                 }
-                // Stage temporary user for onboarding profile setup
                 state.currentUser = {
                     uid: 'user_' + Date.now(),
                     email: emailInput,
@@ -562,7 +620,6 @@
                 navAdmin.classList.remove('flex');
             }
 
-            // Highlight active button
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-brand-pink', 'to-brand-pinkLight', 'text-white', 'shadow-lg', 'scale-105');
                 btn.classList.add('text-slate-500', 'dark:text-slate-400');
@@ -604,19 +661,16 @@
             const container = document.getElementById('mainContainer');
             updateNavState();
 
-            // 1. Not Logged In Screen
             if (!state.currentUser) {
                 container.innerHTML = renderLoginScreen();
                 return;
             }
 
-            // 2. Onboarding Screen
             if (!state.currentUser.isSetup) {
                 container.innerHTML = renderOnboardingScreen();
                 return;
             }
 
-            // 3. Tab Navigation Routing
             switch (state.activeTab) {
                 case 'dashboard':
                     container.innerHTML = renderDashboardView();
@@ -637,7 +691,6 @@
                     container.innerHTML = renderDashboardView();
             }
 
-            // Re-apply static i18n text if present
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[state.lang][key]) el.innerText = dict[state.lang][key];
@@ -663,7 +716,6 @@
                             </p>
                         </div>
 
-                        <!-- Auth Mode Tabs -->
                         <div class="p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-950/50 flex gap-1 border border-white/20">
                             <button id="authTabLogin" onclick="setAuthMode('login')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all ${authMode === 'login' ? 'bg-gradient-to-r from-brand-pink to-brand-pinkLight text-white shadow-md' : 'text-slate-500 dark:text-slate-400'}">
                                 ${t('loginTabBtn')}
@@ -673,7 +725,6 @@
                             </button>
                         </div>
 
-                        <!-- Email & Password Form -->
                         <form onsubmit="handleEmailAuth(event)" class="space-y-4 text-left">
                             <div>
                                 <label class="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">
@@ -700,7 +751,6 @@
 
         // 2. Onboarding View
         function renderOnboardingScreen() {
-            const isFirst = state.users.length === 0;
             return `
                 <div class="max-w-md mx-auto">
                     <div class="glass-panel p-6 rounded-3xl space-y-5 shadow-2xl">
@@ -708,13 +758,6 @@
                             <h2 class="text-xl font-bold">${t('onboardingTitle')}</h2>
                             <p class="text-xs text-slate-500">${state.currentUser.email}</p>
                         </div>
-
-                        ${isFirst ? `
-                            <div class="p-3.5 rounded-2xl bg-brand-gold/15 border border-brand-gold/30 text-amber-800 dark:text-amber-300 text-xs flex items-center gap-3">
-                                <i class="fa-solid fa-crown text-brand-gold text-lg shrink-0"></i>
-                                <span>${t('firstUserNotice')}</span>
-                            </div>
-                        ` : ''}
 
                         <form onsubmit="saveProfileOnboarding(event)" class="space-y-4">
                             <div class="grid grid-cols-2 gap-3">
@@ -819,19 +862,17 @@
             const balance = approvedDeposits - approvedExpenses;
 
             return `
-                <div class="space-y-6 animate-in fade-in duration-300">
                     <!-- User Greeting Header -->
                     <div class="flex justify-between items-center">
                         <div>
                             <h2 class="text-xl font-bold">สวัสดี, ${state.currentUser.nickname}! 👋</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">LDC14 Cheerleader Fund</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">LDC 14th Generation</p>
                         </div>
                         <span class="px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink dark:text-pink-300 border border-brand-pink/30 text-xs font-semibold uppercase">
                             ${t(state.currentUser.role)}
                         </span>
                     </div>
 
-                    <!-- Financial Summary Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="glass-panel p-6 rounded-3xl relative overflow-hidden bg-gradient-to-br from-brand-pink/90 to-brand-pinkDark text-white shadow-xl">
                             <i class="fa-solid fa-vault absolute top-0 right-0 p-6 text-9xl opacity-10 pointer-events-none"></i>
@@ -859,7 +900,6 @@
                         </div>
                     </div>
 
-                    <!-- Deposit Modal Form -->
                     <div id="depositFormDrawer" class="hidden glass-panel p-6 rounded-3xl animate-in zoom-in-95 duration-300">
                         <h3 class="text-lg font-bold mb-4">${t('addFunds')}</h3>
                         <form onsubmit="submitDeposit(event)" class="space-y-4">
@@ -884,7 +924,6 @@
                         </form>
                     </div>
 
-                    <!-- Fund Activity Log -->
                     <div class="mt-8 space-y-4">
                         <h3 class="text-lg font-bold">${t('movementHistory')}</h3>
                         <div class="space-y-3">
@@ -1122,7 +1161,7 @@
         }
 
         function renderApprovalCard(tx) {
-            const reqUser = state.users.find(u => u.uid === tx.requestedBy);
+            const reqUser = state.users.find(u => u.uid === (tx.requestedBy || tx.targetUser));
             const slip = tx.slipUrl || tx.proofUrl;
             return `
                 <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center shadow-md">
@@ -1171,9 +1210,43 @@
                 <div class="space-y-6 animate-in fade-in duration-300">
                     <h2 class="text-xl font-bold">${t('admin')}</h2>
 
+                    <!-- All Registered Members Section -->
+                    <div class="glass-panel p-6 rounded-3xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                            <h3 class="text-base font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-users text-brand-pink"></i> ${t('registeredMembers')}
+                            </h3>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-brand-pink/15 text-brand-pink font-semibold">
+                                ทั้งหมด ${state.users.length} คน
+                            </span>
+                        </div>
+                        <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                            ${state.users.map(u => `
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden shrink-0 flex items-center justify-center">
+                                            ${u.photoUrl ? `<img src="${u.photoUrl}" class="w-full h-full object-cover"/>` : `<i class="fa-solid fa-user text-slate-400 text-sm"></i>`}
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-xs">${u.name} ${u.surname} (${u.nickname})</p>
+                                            <p class="text-[10px] text-slate-500">${u.studentId} • ${u.email}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                                        u.role === 'treasurer' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : 'bg-slate-500/20 text-slate-600 dark:text-slate-400'
+                                    }">
+                                        ${t(u.role)}
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
                     <!-- Treasurer Refund Tool -->
                     <div class="glass-panel p-6 rounded-3xl space-y-4">
-                        <h3 class="text-base font-bold">${t('issueRefund')}</h3>
+                        <h3 class="text-base font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-hand-holding-dollar text-brand-gold"></i> ${t('issueRefund')}
+                        </h3>
                         <form onsubmit="submitRefund(event)" class="space-y-4">
                             <div>
                                 <label class="text-xs font-semibold mb-1 block">${t('targetMember')}</label>
@@ -1206,7 +1279,9 @@
 
                     <!-- Member Role Manager -->
                     <div class="space-y-3">
-                        <h3 class="text-base font-bold">${t('manageRoles')}</h3>
+                        <h3 class="text-base font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-user-gear text-brand-pink"></i> ${t('manageRoles')}
+                        </h3>
                         ${state.users.map(u => `
                             <div class="glass-panel p-4 rounded-2xl flex items-center justify-between gap-4">
                                 <div class="flex items-center gap-3">
@@ -1336,7 +1411,6 @@
                         ` : ''}
                     </div>
 
-                    <!-- Personal Metrics -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="glass-panel p-4 rounded-2xl text-center">
                             <p class="text-xs text-slate-500 mb-1">${t('contributions')}</p>
@@ -1348,7 +1422,6 @@
                         </div>
                     </div>
 
-                    <!-- Individual History -->
                     <div class="space-y-3">
                         <h3 class="text-base font-bold">${t('history')}</h3>
                         ${myTx.length === 0 ? `<p class="text-slate-500 text-xs text-center py-4">ไม่มีประวัติการชำระเงิน</p>` : ''}
@@ -1407,7 +1480,6 @@
             u.studentId = studentId;
             if (uploadedImageTemp) u.photoUrl = uploadedImageTemp;
 
-            // Update in users array
             const idx = state.users.findIndex(usr => usr.uid === u.uid);
             if (idx !== -1) state.users[idx] = { ...u };
 
