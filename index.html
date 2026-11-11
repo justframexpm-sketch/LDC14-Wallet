@@ -8,7 +8,7 @@
     <!-- Minimalist SVG Favicon (Cute Wallet) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='25' width='80' height='55' rx='12' fill='%23FFC2D1'/><path d='M10 45 Q 50 65 90 45 L90 68 Q90 80 78 80 L22 80 Q10 80 10 68 Z' fill='%23FB6F92'/><circle cx='50' cy='48' r='10' fill='%23F4D160'/></svg>">
     
-    <!-- Phosphor Icons (Cute Line Art) -->
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <!-- Tailwind CSS -->
@@ -32,8 +32,9 @@
                         sans: ['"IBM Plex Sans Thai"', 'sans-serif']
                     },
                     boxShadow: {
-                        'soft': '0 10px 30px -5px rgba(255, 158, 187, 0.2)',
-                        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.05)'
+                        'soft': '0 10px 30px -5px rgba(255, 158, 187, 0.25)',
+                        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glass': '0 8px 32px 0 rgba(255, 158, 187, 0.2)'
                     }
                 }
             }
@@ -113,14 +114,29 @@
             pointer-events: none;
         }
 
+        /* Modern Liquid Glass Effect */
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.65) !important;
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(255, 158, 187, 0.3);
+        }
+        .dark .liquid-glass {
+            background: rgba(30, 41, 59, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
         .glass-btn {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: transform 0.1s ease;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .dark .glass-btn {
-            background: rgba(40, 40, 40, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(40, 50, 70, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .glass-btn:active { transform: scale(0.95); }
 
@@ -135,24 +151,41 @@
             justify-content: center;
             margin: 0 auto;
             background: #F8F9FA;
-            transition: all 0.15s;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .dark .keypad-btn { background: #334155; color: white; }
-        .keypad-btn:active { background: #FFC2D1; color: #FB6F92; }
+        .keypad-btn:active { background: #FFC2D1; color: #FB6F92; transform: scale(0.92); }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .nav-active { color: #FB6F92 !important; font-weight: 600; }
+
+        /* Liquid Animations */
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(18px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-float {
+            animation: floatUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        .animate-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="text-slate-800 dark:text-slate-100 transition-colors duration-300 md:p-6 lg:p-10">
 
     <div id="app" class="app-container">
-        <!-- Header -->
-        <header id="topHeader" class="sticky top-0 z-40 px-6 py-4 bg-white/90 dark:bg-[#1E293B]/90 backdrop-blur flex items-center justify-between rounded-t-none md:rounded-t-[2rem]">
+        <!-- Header with Liquid Glass styling -->
+        <header id="topHeader" class="sticky top-0 z-40 px-6 py-4 liquid-glass flex items-center justify-between rounded-t-none md:rounded-t-[2rem]">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-brand-pinkLight flex items-center justify-center text-brand-pinkDark">
+                <div class="w-10 h-10 rounded-2xl bg-brand-pinkLight flex items-center justify-center text-brand-pinkDark shadow-sm">
                     <i class="ph ph-wallet text-2xl"></i>
                 </div>
                 <div>
@@ -161,11 +194,11 @@
                 </div>
             </div>
             <div class="flex gap-2">
-                <button onclick="toggleLang()" class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1">
+                <button onclick="toggleLang()" class="px-2.5 py-1 rounded-full bg-slate-100/80 dark:bg-slate-700/80 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1">
                     <i class="ph ph-globe text-sm"></i>
                     <span id="langLabel">EN</span>
                 </button>
-                <button onclick="toggleTheme()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                <button onclick="toggleTheme()" class="w-9 h-9 rounded-full bg-slate-100/80 dark:bg-slate-700/80 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
                     <i id="themeIcon" class="ph ph-moon text-lg"></i>
                 </button>
                 <button id="logoutBtn" onclick="logout()" class="hidden w-9 h-9 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
@@ -174,35 +207,36 @@
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main id="mainContainer" class="flex-1 overflow-y-auto no-scrollbar p-6 pb-28">
+        <!-- Main Content with Float Animation -->
+        <main id="mainContainer" class="flex-1 overflow-y-auto no-scrollbar p-6 pb-28 animate-float">
             <div class="flex flex-col items-center justify-center py-20 text-slate-400">
                 <i class="ph ph-spinner-gap animate-spin text-3xl text-brand-pink mb-3"></i>
                 <p id="connectingText" class="text-sm font-light">กำลังเชื่อมต่อระบบ...</p>
             </div>
         </main>
 
-        <!-- Bottom Navigation -->
-        <nav id="bottomNav" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-40">
-            <div class="bg-white dark:bg-slate-800 shadow-[0_10px_40px_rgba(0,0,0,0.1)] rounded-full px-4 py-3 flex justify-around items-center border border-slate-100 dark:border-slate-700">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
+        <!-- Floating Bottom Navigation with Liquid Glass -->
+        <nav id="bottomNav" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-50">
+            <div class="liquid-glass rounded-full px-4 py-3 flex justify-around items-center">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 text-slate-400 transition-all active:scale-90 w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-house text-2xl"></i>
                     <span class="text-[10px]" data-i18n="navHome">หน้าหลัก</span>
                 </button>
-                <button onclick="switchTab('expenses')" id="nav-expenses" class="flex flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
+                <button onclick="switchTab('expenses')" id="nav-expenses" class="flex flex-col items-center gap-1 text-slate-400 transition-all active:scale-90 w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-receipt text-2xl"></i>
                     <span class="text-[10px]" data-i18n="navExpense">เบิกจ่าย</span>
                 </button>
-                <button onclick="switchTab('approvals')" id="nav-approvals" class="hidden flex-col items-center gap-1 text-slate-400 transition-colors w-16 relative hover:text-slate-600 dark:hover:text-slate-300">
+                <button onclick="switchTab('approvals')" id="nav-approvals" class="hidden flex-col items-center gap-1 text-slate-400 transition-all active:scale-90 w-16 relative hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-check-circle text-2xl"></i>
                     <span class="text-[10px]" data-i18n="navApproval">อนุมัติ</span>
-                    <span id="nav-badge" class="hidden absolute top-0 right-3 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <span id="nav-badge" class="hidden absolute top-0 right-3 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
+                    <span id="nav-badge-solid" class="hidden absolute top-0 right-3 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                 </button>
-                <button onclick="switchTab('admin')" id="nav-admin" class="hidden flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
+                <button onclick="switchTab('admin')" id="nav-admin" class="hidden flex-col items-center gap-1 text-slate-400 transition-all active:scale-90 w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-users text-2xl"></i>
                     <span class="text-[10px]" data-i18n="navManage">จัดการ</span>
                 </button>
-                <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
+                <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-slate-400 transition-all active:scale-90 w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-user text-2xl"></i>
                     <span class="text-[10px]" data-i18n="navProfile">โปรไฟล์</span>
                 </button>
@@ -248,16 +282,16 @@
         </div>
     </div>
 
-    <!-- Scan Modal -->
-    <div id="scanModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
-        <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4 text-center">
+    <!-- Scan Modal with Restored PromptPay QR -->
+    <div id="scanModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 max-h-[85vh] overflow-y-auto no-scrollbar shadow-2xl text-center">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-lg">สแกนจ่าย / ฝากเงิน</h3>
                 <button onclick="document.getElementById('scanModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
             </div>
-            <div class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl mb-4 border border-slate-100 dark:border-slate-800 flex flex-col items-center">
-                <i class="ph ph-qr-code text-6xl text-brand-pinkDark mb-2"></i>
-                <p class="text-xs text-slate-500 dark:text-slate-400">ใช้สแกน QR Code เพื่อทำรายการฝากเงินกองกลาง</p>
+            <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl mb-4 border border-slate-100 dark:border-slate-800 flex flex-col items-center">
+                <img src="https://promptpay.io/0812345678.png" alt="PromptPay QR Code" class="w-48 h-48 object-contain rounded-xl mb-2 shadow-sm border border-slate-100">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">ใช้สแกน QR Code พร้อมเพย์ เพื่อฝากเงินกองกลาง</p>
             </div>
             <button onclick="document.getElementById('scanModal').classList.add('hidden'); document.getElementById('actionModal').classList.remove('hidden');" class="w-full py-3.5 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors shadow-soft">
                 เปิด QR Code ฝากเงิน
@@ -661,7 +695,8 @@
             reader.onloadend = () => {
                 uploadedImageTemp = reader.result;
                 const el = document.getElementById(previewId);
-                if(el) el.innerHTML = `<img src="${reader.result}" class="w-full h-full object-cover rounded-xl" />`;
+                // Restrict image max height so it does not overflow modal submit buttons
+                if(el) el.innerHTML = `<img src="${reader.result}" class="w-full max-h-32 object-contain rounded-xl" />`;
             };
             reader.readAsDataURL(file);
         }
@@ -687,6 +722,11 @@
             const container = document.getElementById('mainContainer');
             const nav = document.getElementById('bottomNav');
             const logoutBtn = document.getElementById('logoutBtn');
+
+            // Refresh smooth tab animation on change
+            container.classList.remove('animate-float');
+            void container.offsetWidth;
+            container.classList.add('animate-float');
 
             // Update static i18n text
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -727,7 +767,14 @@
                 
                 const pending = state.transactions.filter(t => t.status === 'pending').length;
                 const badge = document.getElementById('nav-badge');
-                if(pending > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden');
+                const badgeSolid = document.getElementById('nav-badge-solid');
+                if(pending > 0) {
+                    if (badge) badge.classList.remove('hidden');
+                    if (badgeSolid) badgeSolid.classList.remove('hidden');
+                } else {
+                    if (badge) badge.classList.add('hidden');
+                    if (badgeSolid) badgeSolid.classList.add('hidden');
+                }
             } else {
                 document.getElementById('nav-approvals').classList.add('hidden');
                 document.getElementById('nav-approvals').classList.remove('flex');
@@ -747,13 +794,13 @@
         function renderAuth() {
             return `
                 <div class="flex flex-col items-center pt-8 md:pt-16 max-w-md mx-auto">
-                    <div class="w-20 h-20 rounded-[24px] bg-brand-pink/10 flex items-center justify-center mb-6">
+                    <div class="w-20 h-20 rounded-[24px] bg-brand-pink/10 flex items-center justify-center mb-6 shadow-sm">
                         <i class="ph ph-piggy-bank text-4xl text-brand-pinkDark"></i>
                     </div>
                     <h2 class="text-2xl font-bold mb-1">${authMode === 'login' ? t('login') : t('register')}</h2>
                     <p class="text-sm font-light text-slate-400 mb-8">LDC Wallet Gen 14</p>
 
-                    <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full mb-6 w-64">
+                    <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full mb-6 w-64 border border-slate-200/50 dark:border-slate-700/50">
                         <button onclick="setAuthMode('login')" class="flex-1 py-2 text-sm font-medium rounded-full transition-colors ${authMode==='login'?'bg-white dark:bg-slate-700 shadow-sm text-brand-pinkDark':'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">${t('login')}</button>
                         <button onclick="setAuthMode('register')" class="flex-1 py-2 text-sm font-medium rounded-full transition-colors ${authMode==='register'?'bg-white dark:bg-slate-700 shadow-sm text-brand-pinkDark':'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">${t('register')}</button>
                     </div>
@@ -822,7 +869,7 @@
             return `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    <!-- Left Column: Bank Card and Quick Actions -->
+                    <!-- Left Column: Card & Quick Actions -->
                     <div class="space-y-6 lg:col-span-1 md:col-span-1">
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-12 rounded-full bg-slate-200 overflow-hidden shadow-sm flex items-center justify-center shrink-0">
@@ -850,25 +897,25 @@
 
                         <div class="grid grid-cols-4 gap-3">
                             <button onclick="document.getElementById('actionModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
-                                <div class="w-12 h-12 rounded-2xl bg-brand-pinkLight/30 text-brand-pinkDark flex items-center justify-center text-2xl"><i class="ph ph-arrow-down-left"></i></div>
+                                <div class="w-12 h-12 rounded-2xl bg-brand-pinkLight/30 text-brand-pinkDark flex items-center justify-center text-2xl shadow-sm"><i class="ph ph-arrow-down-left"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('deposit')}</span>
                             </button>
                             <button onclick="switchTab('expenses')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
-                                <div class="w-12 h-12 rounded-2xl bg-brand-goldLight/50 text-yellow-600 flex items-center justify-center text-2xl"><i class="ph ph-arrow-up-right"></i></div>
+                                <div class="w-12 h-12 rounded-2xl bg-brand-goldLight/50 text-yellow-600 flex items-center justify-center text-2xl shadow-sm"><i class="ph ph-arrow-up-right"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('reimburse')}</span>
                             </button>
                             <button onclick="document.getElementById('scanModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-2xl"><i class="ph ph-qr-code"></i></div>
+                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-2xl shadow-sm"><i class="ph ph-qr-code"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('scan')}</span>
                             </button>
                             ${isTreasurer ? `
                             <button onclick="document.getElementById('refundModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
-                                <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-500 flex items-center justify-center text-2xl"><i class="ph ph-hand-coins"></i></div>
+                                <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-500 flex items-center justify-center text-2xl shadow-sm"><i class="ph ph-hand-coins"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('refund')}</span>
                             </button>
                             ` : `
                             <button onclick="switchTab('profile')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-2xl"><i class="ph ph-clock-counter-clockwise"></i></div>
+                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-2xl shadow-sm"><i class="ph ph-clock-counter-clockwise"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('history')}</span>
                             </button>
                             `}
@@ -916,17 +963,18 @@
                     </div>
                 </div>
 
-                <!-- Deposit Drawer Modal -->
-                <div id="actionModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center md:items-center items-end justify-center">
-                    <div class="bg-white dark:bg-slate-800 w-full rounded-t-3xl md:rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700">
+                <!-- Scrollable Deposit Drawer Modal with Restored PromptPay QR -->
+                <div id="actionModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center md:items-center items-end justify-center p-2">
+                    <div class="bg-white dark:bg-slate-800 w-full rounded-t-3xl md:rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 max-h-[85vh] overflow-y-auto no-scrollbar shadow-2xl">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-lg">${t('depositToFund')}</h3>
                             <button onclick="document.getElementById('actionModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
                         </div>
                         <form onsubmit="submitDeposit(event)" class="space-y-4">
-                            <div class="w-full max-w-[200px] mx-auto p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800">
-                                <i class="ph ph-qr-code text-6xl text-brand-pinkDark mb-1"></i>
-                                <span class="text-[10px] text-slate-400">PromptPay QR</span>
+                            <!-- PromptPay QR Code restored -->
+                            <div class="w-full max-w-[220px] mx-auto p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800 shadow-sm">
+                                <img src="https://promptpay.io/0812345678.png" alt="PromptPay QR Code" class="w-full h-auto rounded-xl object-contain mb-1">
+                                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">PromptPay QR Code (สแกนเพื่อโอน)</span>
                             </div>
                             
                             <div>
@@ -935,9 +983,9 @@
                             </div>
                             <div>
                                 <input type="file" id="dep_slip" accept="image/*" required class="hidden" onchange="handleImageUpload(event, 'dep_preview')">
-                                <label for="dep_slip" class="block w-full py-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <div id="dep_preview" class="text-slate-400 flex flex-col items-center">
-                                        <i class="ph ph-upload-simple text-3xl mb-2 text-slate-300"></i>
+                                <label for="dep_slip" class="block w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <div id="dep_preview" class="text-slate-400 flex flex-col items-center justify-center">
+                                        <i class="ph ph-upload-simple text-3xl mb-1 text-slate-300"></i>
                                         <span class="text-xs font-medium">${t('uploadSlip')}</span>
                                     </div>
                                 </label>
@@ -947,10 +995,10 @@
                     </div>
                 </div>
 
-                <!-- Treasurer Refund Modal -->
+                <!-- Scrollable Treasurer Refund Modal -->
                 ${isTreasurer ? `
-                <div id="refundModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
-                    <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4">
+                <div id="refundModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-2">
+                    <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4 max-h-[85vh] overflow-y-auto no-scrollbar shadow-2xl">
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <h3 class="font-bold text-lg">${t('refundMember')}</h3>
@@ -977,7 +1025,7 @@
                             <div>
                                 <input type="file" id="ref_slip" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'ref_preview')">
                                 <label for="ref_slip" class="block w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <div id="ref_preview" class="text-slate-400 flex flex-col items-center">
+                                    <div id="ref_preview" class="text-slate-400 flex flex-col items-center justify-center">
                                         <i class="ph ph-upload-simple text-2xl mb-1 text-slate-300"></i>
                                         <span class="text-xs font-medium">${t('attachRefundSlip')}</span>
                                     </div>
@@ -1253,9 +1301,9 @@
                         }).join('')}
                     </div>
 
-                    <!-- Expense Request Drawer Modal -->
-                    <div id="expenseModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
-                        <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4">
+                    <!-- Scrollable Expense Request Drawer Modal -->
+                    <div id="expenseModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-2">
+                        <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4 max-h-[85vh] overflow-y-auto no-scrollbar shadow-2xl">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-lg">${t('claimReimburse')}</h3>
                                 <button onclick="document.getElementById('expenseModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
