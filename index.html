@@ -60,9 +60,8 @@
             user-select: none;
         }
 
-        .dark body { background-color: #0F172A; } /* Slate 900 */
+        .dark body { background-color: #0F172A; }
 
-        /* Updated to be responsive on iPad and Desktop */
         .app-container {
             width: 100%;
             margin: 0 auto;
@@ -76,7 +75,7 @@
 
         @media (min-width: 768px) {
             .app-container {
-                max-width: 48rem; /* md:max-w-3xl */
+                max-width: 48rem;
                 min-height: 850px;
                 border-radius: 2rem;
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
@@ -87,12 +86,12 @@
 
         @media (min-width: 1024px) {
             .app-container {
-                max-width: 64rem; /* lg:max-w-5xl */
+                max-width: 64rem;
             }
         }
 
         .dark .app-container {
-            background: #1E293B; /* Slate 800 */
+            background: #1E293B;
             border-color: rgba(255,255,255,0.05);
         }
 
@@ -245,8 +244,24 @@
         </div>
     </div>
 
+    <!-- Scan Modal -->
+    <div id="scanModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4 text-center">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">สแกนจ่าย / ฝากเงิน</h3>
+                <button onclick="document.getElementById('scanModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl mb-4 border border-slate-100 dark:border-slate-800 flex flex-col items-center">
+                <i class="ph ph-qr-code text-6xl text-brand-pinkDark mb-2"></i>
+                <p class="text-xs text-slate-500 dark:text-slate-400">ใช้สแกน QR Code เพื่อทำรายการฝากเงินกองกลาง</p>
+            </div>
+            <button onclick="document.getElementById('scanModal').classList.add('hidden'); document.getElementById('actionModal').classList.remove('hidden');" class="w-full py-3.5 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors shadow-soft">
+                เปิด QR Code ฝากเงิน
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Supabase Initialization
         const SUPABASE_URL = "https://jbwirerpdbjbtbuoxncz.supabase.co";
         const SUPABASE_KEY = "sb_publishable_W74U6tBhgRDr50YPeNSeSw_EMvYAkLh";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -300,7 +315,6 @@
                     if (match) state.currentUser = match;
                 }
                 
-                // Do not re-render blindly if we are actively setting up profile to avoid interrupting the user
                 if (!state.currentUser || state.currentUser.isSetup) {
                     render();
                 }
@@ -347,7 +361,6 @@
             }
         }
 
-        // --- AUTH LOGIC ---
         let authMode = 'login';
         function setAuthMode(mode) { authMode = mode; state.enteredPin = ''; render(); }
         
@@ -374,24 +387,34 @@
             const pin = state.enteredPin;
             if (pin.length !== 10) return showToast('กรุณากรอกรหัส 10 หลัก', true);
 
-            const user = state.users.find(u => u.email === email || u.studentId === pin);
-            
             if (authMode === 'login') {
-                if (!user) return showToast('ไม่พบบัญชี กรุณาลงทะเบียน', true);
-                if (user.studentId !== pin) return showToast('รหัส 10 หลักไม่ถูกต้อง', true);
+                const user = state.users.find(u => u.email === email && u.studentId === pin);
+                if (!user) return showToast('อีเมลหรือรหัส 10 หลักไม่ถูกต้อง', true);
+                
                 state.currentUser = user;
                 localStorage.setItem('ldc14_minimal_session', JSON.stringify(user));
                 showToast('เข้าสู่ระบบสำเร็จ');
                 render();
             } else {
-                if (user) return showToast('อีเมลหรือรหัสนี้ลงทะเบียนแล้ว', true);
-                // Create temporary un-setup user
+                const domain = email.split('@')[1];
+                if (domain !== 'bu.ac.th' && domain !== 'bumail.net') {
+                    return showToast('ใช้อีเมล @bu.ac.th หรือ @bumail.net เท่านั้น', true);
+                }
+                
+                const existingByEmail = state.users.find(u => u.email === email);
+                if (existingByEmail) return showToast('อีเมลนี้ลงทะเบียนแล้ว', true);
+                
+                const existingByPin = state.users.filter(u => u.studentId === pin);
+                if (existingByPin.length >= 2) return showToast('รหัสนักศึกษานี้ลงทะเบียนครบ 2 บัญชีแล้ว', true);
+                
+                const sameDomain = existingByPin.find(u => u.email.endsWith('@' + domain));
+                if (sameDomain) return showToast(`โดเมน @${domain} ถูกใช้สำหรับรหัสนี้ไปแล้ว`, true);
+
                 state.currentUser = { uid: 'user_' + Date.now(), email, studentId: pin, isSetup: false };
-                render(); // Switch to Onboarding immediately
+                render();
             }
         }
 
-        // Fix: Save Onboarding without hanging
         async function saveOnboarding(e) {
             e.preventDefault();
             const name = document.getElementById('ob_name').value;
@@ -421,7 +444,6 @@
                 return showToast('เกิดข้อผิดพลาด: ' + error.message, true);
             }
 
-            // Sync Local State immediately and fully
             state.currentUser = {
                 uid: newUser.uid,
                 email: newUser.email,
@@ -434,18 +456,14 @@
                 isSetup: true
             };
             
-            // Push to state array to avoid overwrites from slow replication
             state.users.push(state.currentUser);
             localStorage.setItem('ldc14_minimal_session', JSON.stringify(state.currentUser));
             
             uploadedImageTemp = '';
             state.activeTab = 'dashboard';
             
-            // Render directly 
             render();
             showToast('สร้างโปรไฟล์สำเร็จ');
-            
-            // Allow fetch to catch up in the background
             fetchCloudData(); 
         }
 
@@ -470,7 +488,6 @@
             reader.readAsDataURL(file);
         }
 
-        // --- Modals logic (Added missing handlers) ---
         function closeConfirmModal() { 
             document.getElementById('confirmModal').classList.add('hidden'); 
         }
@@ -488,7 +505,6 @@
             document.getElementById('proofModal').classList.remove('hidden');
         }
 
-        // --- RENDER LOGIC ---
         function render() {
             const container = document.getElementById('mainContainer');
             const nav = document.getElementById('bottomNav');
@@ -509,7 +525,6 @@
 
             nav.classList.remove('hidden'); logoutBtn.classList.remove('hidden');
             
-            // Setup Nav
             document.querySelectorAll('#bottomNav button').forEach(b => {
                 b.classList.remove('nav-active');
                 b.querySelector('i').classList.remove('weight-fill');
@@ -545,7 +560,6 @@
             }
         }
 
-        // View: Auth
         function renderAuth() {
             return `
                 <div class="flex flex-col items-center pt-8 md:pt-16 max-w-md mx-auto">
@@ -561,7 +575,7 @@
                     </div>
 
                     <form onsubmit="submitAuth(event)" class="w-full">
-                        <input type="email" id="authEmail" required placeholder="อีเมลมหาวิทยาลัย (@bu.ac.th)" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-brand-pinkLight text-center text-sm mb-4">
+                        <input type="email" id="authEmail" required placeholder="อีเมล @bu.ac.th / @bumail.net" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-brand-pinkLight text-center text-sm mb-4">
                         
                         <div class="text-center mb-2 text-sm font-medium text-slate-500">รหัส 10 หลัก</div>
                         <div id="pinDots" class="flex justify-center mb-6 h-4 items-center"></div>
@@ -581,7 +595,6 @@
             `;
         }
 
-        // View: Onboarding
         function renderOnboarding() {
             return `
                 <div class="pt-4 max-w-md mx-auto">
@@ -616,11 +629,11 @@
             `;
         }
 
-        // View: Dashboard with Responsive Grid
         function renderDashboard() {
             const deps = state.transactions.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((s, t) => s + Number(t.amount), 0);
             const exps = state.transactions.filter(t => (t.type === 'expense' || t.type === 'refund') && t.status === 'approved').reduce((s, t) => s + Number(t.amount), 0);
             const bal = deps - exps;
+            const isTreasurer = state.currentUser.role === 'treasurer';
 
             return `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -633,7 +646,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-slate-400 font-light">สวัสดี,</p>
-                                <h2 class="font-bold text-lg leading-none">${state.currentUser.nickname}</h2>
+                                <h2 class="font-bold text-lg leading-none">${state.currentUser.nickname} ${isTreasurer ? '<span class="text-[10px] bg-brand-pinkLight/40 text-brand-pinkDark px-2 py-0.5 rounded-full font-bold ml-1">เหรัญญิก</span>' : ''}</h2>
                             </div>
                         </div>
 
@@ -660,14 +673,21 @@
                                 <div class="w-12 h-12 rounded-2xl bg-brand-goldLight/50 text-yellow-600 flex items-center justify-center text-2xl"><i class="ph ph-arrow-up-right"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">เบิกจ่าย</span>
                             </button>
-                            <button onclick="document.getElementById('actionModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-brand-pinkDark flex items-center justify-center text-2xl"><i class="ph ph-qr-code"></i></div>
+                            <button onclick="document.getElementById('scanModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
+                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-2xl"><i class="ph ph-qr-code"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">สแกน</span>
                             </button>
+                            ${isTreasurer ? `
+                            <button onclick="document.getElementById('refundModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
+                                <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-500 flex items-center justify-center text-2xl"><i class="ph ph-hand-coins"></i></div>
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">คืนเงิน</span>
+                            </button>
+                            ` : `
                             <button onclick="switchTab('profile')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
                                 <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-2xl"><i class="ph ph-clock-counter-clockwise"></i></div>
                                 <span class="text-xs font-medium text-slate-600 dark:text-slate-300">ประวัติ</span>
                             </button>
+                            `}
                         </div>
                     </div>
 
@@ -679,16 +699,17 @@
                         <div class="space-y-3">
                             ${state.transactions.slice(0, 10).map(tx => {
                                 const isDep = tx.type === 'deposit';
-                                const u = state.users.find(x => x.uid === (tx.requestedBy || tx.targetUser)) || {};
-                                const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? 'ฝากเงิน' : (tx.description || 'เบิกจ่าย')}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
+                                const isRef = tx.type === 'refund';
+                                const u = state.users.find(x => x.uid === (tx.targetUser || tx.requestedBy)) || {};
+                                const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงินสมาชิก' : (tx.description || 'เบิกจ่าย')}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
                                 
                                 return `
                                 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl flex items-center gap-3 shadow-card border border-slate-50 dark:border-slate-700/50 ${proofAction ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors' : ''}" ${proofAction}>
-                                    <div class="w-10 h-10 rounded-full ${isDep ? 'bg-green-50 text-green-500 dark:bg-green-500/10' : 'bg-red-50 text-red-400 dark:bg-red-500/10'} flex items-center justify-center text-lg shrink-0">
-                                        <i class="ph ${isDep ? 'ph-arrow-down-left' : 'ph-arrow-up-right'}"></i>
+                                    <div class="w-10 h-10 rounded-full ${isDep ? 'bg-green-50 text-green-500 dark:bg-green-500/10' : isRef ? 'bg-purple-50 text-purple-500 dark:bg-purple-500/10' : 'bg-red-50 text-red-400 dark:bg-red-500/10'} flex items-center justify-center text-lg shrink-0">
+                                        <i class="ph ${isDep ? 'ph-arrow-down-left' : isRef ? 'ph-hand-coins' : 'ph-arrow-up-right'}"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-semibold text-sm truncate">${isDep ? 'ฝากเงิน' : (tx.description || 'เบิกจ่าย')}</p>
+                                        <p class="font-semibold text-sm truncate">${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงินสมาชิก (' + (tx.description || '') + ')' : (tx.description || 'เบิกจ่าย')}</p>
                                         <div class="flex gap-2 items-center">
                                             <p class="text-[10px] text-slate-400">${u.nickname || 'User'}</p>
                                             <span class="text-[9px] px-1.5 py-[2px] rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600 dark:bg-green-500/20':tx.status==='rejected'?'bg-red-100 text-red-600 dark:bg-red-500/20':'bg-orange-100 text-orange-600 dark:bg-orange-500/20'}">${tx.status==='approved'?'สำเร็จ':tx.status==='rejected'?'ถูกปฎิเสธ':'รอตรวจสอบ'}</span>
@@ -700,6 +721,11 @@
                                         </div>
                                         ${(tx.slipUrl || tx.proofUrl) ? `<i class="ph ph-image text-slate-300 text-xs mt-0.5 inline-block"></i>` : ''}
                                     </div>
+                                    ${state.currentUser.role === 'treasurer' ? `
+                                        <button onclick="event.stopPropagation(); confirmDeleteTx('${tx.id}')" title="ลบรายการ" class="ml-2 w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
+                                            <i class="ph ph-trash text-sm"></i>
+                                        </button>
+                                    ` : ''}
                                 </div>`;
                             }).join('') || '<p class="text-center text-sm font-light text-slate-400 py-10">ยังไม่มีรายการ</p>'}
                         </div>
@@ -714,7 +740,6 @@
                             <button onclick="document.getElementById('actionModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
                         </div>
                         <form onsubmit="submitDeposit(event)" class="space-y-4">
-                            <!-- Included Thai QR Payment image -->
                             <img src="image_14736d.jpg" class="w-full max-w-[200px] mx-auto rounded-2xl shadow-sm mb-4" alt="Thai QR Payment">
                             
                             <div>
@@ -734,6 +759,48 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Treasurer Refund Modal -->
+                ${isTreasurer ? `
+                <div id="refundModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                    <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg">ทำรายการคืนเงินสมาชิก</h3>
+                                <p class="text-xs text-slate-400 font-light">(เฉพาะเหรัญญิก)</p>
+                            </div>
+                            <button onclick="document.getElementById('refundModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
+                        </div>
+                        <form onsubmit="submitTreasurerRefund(event)" class="space-y-4">
+                            <div>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">เลือกสมาชิกที่จะรับเงินคืน</label>
+                                <select id="ref_target_user" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
+                                    <option value="">-- เลือกสมาชิก --</option>
+                                    ${state.users.map(u => `<option value="${u.uid}">${u.name} (${u.nickname}) - ${u.studentId}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">เหตุผลในการคืนเงิน</label>
+                                <input type="text" id="ref_reason" required placeholder="เช่น คืนเงินส่วนเกินกิจกรรม, ลาออก" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">จำนวนเงินที่คืน (บาท)</label>
+                                <input type="number" id="ref_amt" required placeholder="0.00" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
+                            </div>
+                            <div>
+                                <input type="file" id="ref_slip" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'ref_preview')">
+                                <label for="ref_slip" class="block w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <div id="ref_preview" class="text-slate-400 flex flex-col items-center">
+                                        <i class="ph ph-upload-simple text-2xl mb-1 text-slate-300"></i>
+                                        <span class="text-xs font-medium">แนบสลิปโอนคืน (ถ้ามี)</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <button type="submit" class="w-full py-4 rounded-full bg-purple-500 hover:bg-purple-600 text-white font-bold transition-colors mt-2 shadow-soft">อนุมัติและทำรายการคืนเงิน</button>
+                        </form>
+                    </div>
+                </div>
+                ` : ''}
             `;
         }
 
@@ -766,7 +833,46 @@
             showToast('ส่งรายการสำเร็จ รอการตรวจสอบ');
         }
 
-        // --- RESTORED LOGIC & HANDLERS ---
+        async function submitTreasurerRefund(e) {
+            e.preventDefault();
+            if (state.currentUser.role !== 'treasurer') {
+                return showToast('เฉพาะเหรัญญิกเท่านั้นที่สามารถทำรายการคืนเงินได้', true);
+            }
+
+            const targetUid = document.getElementById('ref_target_user').value;
+            const reason = document.getElementById('ref_reason').value;
+            const amt = document.getElementById('ref_amt').value;
+            
+            if (!targetUid || !reason || !amt) {
+                return showToast('กรุณากรอกข้อมูลให้ครบถ้วน', true);
+            }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            const { error } = await supabaseClient.from('transactions').insert([{ 
+                id: 'tx_'+Date.now(), 
+                type: 'refund', 
+                amount: amt,
+                description: reason,
+                status: 'approved',
+                requested_by: state.currentUser.uid,
+                target_user: targetUid,
+                slip_url: uploadedImageTemp || ''
+            }]);
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+            if(error) return showToast(error.message, true);
+            
+            document.getElementById('refundModal').classList.add('hidden');
+            uploadedImageTemp = '';
+            showToast('ทำรายการคืนเงินสำเร็จ');
+        }
+
         let isEditingProfile = false;
 
         function toggleEditProfile() {
@@ -778,7 +884,6 @@
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
             
-            // Validate Student ID
             const newStudentId = document.getElementById('edit_studentId').value.trim();
             if (!/^\d{10}$/.test(newStudentId)) {
                 return showToast('กรุณากรอกรหัสนักศึกษา 10 หลัก', true);
@@ -866,14 +971,14 @@
         }
         
         function confirmDeleteTx(txId) {
-            document.getElementById('confirmModalTitle').innerText = 'ยกเลิกรายการ';
-            document.getElementById('confirmModalMsg').innerText = 'คุณต้องการยกเลิกคำขอนี้ใช่หรือไม่?';
+            document.getElementById('confirmModalTitle').innerText = 'ลบรายการ';
+            document.getElementById('confirmModalMsg').innerText = 'คุณต้องการลบรายการนี้ใช่หรือไม่? (การกระทำนี้จะลบรายการออกจากระบบถาวร)';
             const actionBtn = document.getElementById('confirmModalActionBtn');
             actionBtn.onclick = async () => {
                 closeConfirmModal();
                 const { error } = await supabaseClient.from('transactions').delete().eq('id', txId);
-                if(error) showToast("เกิดข้อผิดพลาด", true);
-                else showToast("ยกเลิกรายการแล้ว");
+                if(error) showToast("เกิดข้อผิดพลาดในการลบ: " + error.message, true);
+                else showToast("ลบรายการแล้ว");
             };
             document.getElementById('confirmModal').classList.remove('hidden');
         }
@@ -904,7 +1009,6 @@
             document.getElementById('confirmModal').classList.remove('hidden');
         }
 
-        // --- RESTORED VIEWS ---
         function renderExpenses() {
             const expenses = state.transactions.filter(t => t.type === 'expense');
             return `
@@ -938,7 +1042,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="flex gap-2 justify-end border-t border-slate-100 dark:border-slate-700/50 pt-3">
+                                <div class="flex gap-2 justify-end items-center border-t border-slate-100 dark:border-slate-700/50 pt-3">
                                     ${tx.proofUrl ? `
                                         <button onclick="openProofModal('${tx.proofUrl}', '${tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="text-xs px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
                                             <i class="ph ph-image"></i> ดูใบเสร็จ
@@ -950,9 +1054,9 @@
                                             <i class="ph ph-upload-simple"></i> อัปโหลดใบเสร็จ
                                         </label>
                                     ` : ''}
-                                    ${tx.status === 'pending' && tx.requestedBy === state.currentUser.uid ? `
+                                    ${(tx.status === 'pending' && tx.requestedBy === state.currentUser.uid) || state.currentUser.role === 'treasurer' ? `
                                         <button onclick="confirmDeleteTx('${tx.id}')" class="text-xs px-3 py-1.5 rounded-full bg-red-50 text-red-500 dark:bg-red-500/10 font-medium flex items-center gap-1 hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors">
-                                            <i class="ph ph-trash"></i> ยกเลิก
+                                            <i class="ph ph-trash"></i> ลบรายการ
                                         </button>
                                     ` : ''}
                                 </div>
@@ -998,17 +1102,18 @@
                         ${pendingTxs.map(tx => {
                             const reqUser = state.users.find(u => u.uid === (tx.requestedBy || tx.targetUser)) || {};
                             const isDep = tx.type === 'deposit';
-                            const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? 'ฝากเงิน' : (tx.description||'เบิกจ่าย')}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
+                            const isRef = tx.type === 'refund';
+                            const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงิน' : (tx.description||'เบิกจ่าย')}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
                             
                             return `
                             <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl flex flex-col gap-3 shadow-card border border-slate-50 dark:border-slate-700/50">
                                 <div class="flex justify-between items-start">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full ${isDep ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'} flex items-center justify-center text-lg shrink-0">
-                                            <i class="ph ${isDep ? 'ph-arrow-down-left' : 'ph-arrow-up-right'}"></i>
+                                        <div class="w-10 h-10 rounded-full ${isDep ? 'bg-green-50 text-green-500' : isRef ? 'bg-purple-50 text-purple-500' : 'bg-red-50 text-red-500'} flex items-center justify-center text-lg shrink-0">
+                                            <i class="ph ${isDep ? 'ph-arrow-down-left' : isRef ? 'ph-hand-coins' : 'ph-arrow-up-right'}"></i>
                                         </div>
                                         <div>
-                                            <p class="font-semibold text-sm">${isDep ? 'ฝากเงิน' : (tx.description || 'เบิกจ่าย')}</p>
+                                            <p class="font-semibold text-sm">${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงินสมาชิก (' + (tx.description || '') + ')' : (tx.description || 'เบิกจ่าย')}</p>
                                             <p class="text-[10px] text-slate-400">${reqUser.name} (${reqUser.nickname})</p>
                                         </div>
                                     </div>
@@ -1084,6 +1189,8 @@
             if(!state.prefs) state.prefs = { notifyTransactions: true, notifyRequests: true };
             const isEditing = isEditingProfile;
             
+            const myHist = state.transactions.filter(t => (t.requestedBy === state.currentUser.uid || t.targetUser === state.currentUser.uid) && (t.type === 'deposit' || t.type === 'refund'));
+            
             return `
                 <div class="pt-6 flex flex-col items-center pb-20 max-w-xl mx-auto">
                     <div class="w-24 h-24 rounded-full bg-slate-200 overflow-hidden mb-4 shadow-md flex items-center justify-center relative">
@@ -1093,7 +1200,7 @@
                     ${!isEditing ? `
                         <h2 class="font-bold text-xl">${state.currentUser.name} (${state.currentUser.nickname})</h2>
                         <p class="text-slate-400 text-sm font-mono mt-1">${state.currentUser.studentId}</p>
-                        <span class="mt-3 px-4 py-1.5 rounded-full bg-brand-pinkLight/30 text-brand-pinkDark text-xs font-bold uppercase tracking-wider">${state.currentUser.role}</span>
+                        <span class="mt-3 px-4 py-1.5 rounded-full bg-brand-pinkLight/30 text-brand-pinkDark text-xs font-bold uppercase tracking-wider">${state.currentUser.role === 'treasurer' ? 'เหรัญญิก (Treasurer)' : 'สมาชิก (Member)'}</span>
                         
                         <div class="w-full mt-8 space-y-3 px-2">
                             <button onclick="toggleEditProfile()" class="w-full bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-card flex items-center justify-between text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border border-slate-50 dark:border-slate-700/50">
@@ -1124,6 +1231,26 @@
                                 ออกจากระบบ
                             </button>
                         </div>
+                        
+                        <div class="w-full mt-6 space-y-3 px-2">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">ประวัติโอนเงินเข้ากองกลาง กับได้รับเงินคืน</h3>
+                            ${myHist.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">ไม่มีประวัติ</p>' : myHist.map(tx => `
+                                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl flex justify-between items-center shadow-sm border border-slate-50 dark:border-slate-700/50">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full ${tx.type === 'deposit' ? 'bg-green-50 text-green-500' : 'bg-purple-50 text-purple-500'} flex items-center justify-center shrink-0">
+                                            <i class="ph ${tx.type === 'deposit' ? 'ph-arrow-down-left' : 'ph-hand-coins'}"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="font-medium text-xs truncate">${tx.type === 'deposit' ? 'โอนเงินเข้ากองกลาง' : 'ได้รับเงินคืน (' + (tx.description || '') + ')'}</p>
+                                            <span class="inline-block mt-0.5 text-[9px] px-1.5 py-[2px] rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600':tx.status==='rejected'?'bg-red-100 text-red-600':'bg-orange-100 text-orange-600'}">${tx.status==='approved'?'สำเร็จ':tx.status==='rejected'?'ถูกปฎิเสธ':'รอตรวจสอบ'}</span>
+                                        </div>
+                                    </div>
+                                    <div class="font-bold text-sm ${tx.type === 'deposit' ? 'text-green-500' : 'text-purple-600 dark:text-purple-400'}">
+                                        ${tx.type === 'deposit' ? '+' : '+'}฿${Number(tx.amount).toLocaleString()}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
                     ` : `
                         <form onsubmit="saveProfileEdit(event)" class="w-full mt-4 space-y-4 px-2">
                             <div>
@@ -1136,7 +1263,6 @@
                                 </label>
                             </div>
                             
-                            <!-- Enabled editing of Student ID -->
                             <div>
                                 <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">รหัสนักศึกษา (10 หลัก)</label>
                                 <input type="text" id="edit_studentId" value="${state.currentUser.studentId}" pattern="\\d{10}" maxLength="10" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm font-mono">
