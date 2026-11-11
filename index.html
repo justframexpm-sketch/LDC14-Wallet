@@ -111,7 +111,7 @@
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 overflow-x-hidden flex justify-center items-center p-0 md:p-6 lg:p-10">
 
-    <!-- Screen Frame Container (Responsive: Mobile / Tablet / Desktop) -->
+    <!-- Screen Frame Container -->
     <div id="app" class="relative z-10 w-full max-w-md md:max-w-2xl lg:max-w-6xl min-h-screen md:min-h-[850px] lg:min-h-[750px] md:rounded-[36px] md:shadow-2xl md:border-4 md:border-slate-800 dark:md:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col overflow-hidden">
         
         <!-- Header -->
@@ -328,7 +328,11 @@
                 deleteUser: "ลบสมาชิก",
                 resetDevice: "ปลดล็อกเครื่อง",
                 resetSystem: "ล้างข้อมูลระบบทั้งหมด (Factory Reset)",
-                resetSystemConfirmMsg: "คุณต้องการล้างข้อมูลทั้งหมดในระบบออกจริงหรือไม่? (ผู้ใช้และธุรกรรมทั้งหมดจะถูกลบ)"
+                resetSystemConfirmMsg: "คุณต้องการล้างข้อมูลทั้งหมดในระบบออกจริงหรือไม่? (ผู้ใช้และธุรกรรมทั้งหมดจะถูกลบ)",
+                cancelRequest: "ยกเลิกคำขอ",
+                notifications: "การแจ้งเตือน (Notifications)",
+                notifyTx: "แจ้งเตือนเงินเข้าออก",
+                notifyReq: "แจ้งเตือนคำขอ (เหรัญญิก)"
             },
             en: {
                 bankWelcome: "Welcome to LDC Wallet",
@@ -400,7 +404,11 @@
                 deleteUser: "Delete Member",
                 resetDevice: "Reset Device",
                 resetSystem: "Factory Reset All System Data",
-                resetSystemConfirmMsg: "Are you sure you want to completely clear all system data?"
+                resetSystemConfirmMsg: "Are you sure you want to completely clear all system data?",
+                cancelRequest: "Cancel Request",
+                notifications: "Notifications",
+                notifyTx: "Transaction Alerts",
+                notifyReq: "Request Alerts (Treasurer)"
             }
         };
 
@@ -413,7 +421,8 @@
             activeTab: 'dashboard',
             hideBalance: false,
             enteredPin: '',
-            deviceId: ''
+            deviceId: '',
+            prefs: { notifyTransactions: true, notifyRequests: true }
         };
 
         function getOrCreateDeviceId() {
@@ -425,16 +434,46 @@
             return devId;
         }
 
+        // --- Preferences Manager ---
+        function loadPrefs(uid) {
+            if (!uid) return;
+            const saved = localStorage.getItem('ldc14_prefs_' + uid);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state.lang = parsed.lang || 'th';
+                state.theme = parsed.theme || 'dark';
+                state.prefs = {
+                    notifyTransactions: parsed.notifyTransactions !== false,
+                    notifyRequests: parsed.notifyRequests !== false
+                };
+            } else {
+                state.prefs = { notifyTransactions: true, notifyRequests: true };
+            }
+            document.documentElement.className = state.theme;
+            updateThemeIcon();
+            document.getElementById('langLabel').innerText = state.lang.toUpperCase();
+        }
+
+        function savePrefs() {
+            if (!state.currentUser) return;
+            localStorage.setItem('ldc14_prefs_' + state.currentUser.uid, JSON.stringify({
+                lang: state.lang,
+                theme: state.theme,
+                ...state.prefs
+            }));
+        }
+
         async function initData() {
             state.deviceId = getOrCreateDeviceId();
             
             const savedSession = localStorage.getItem('ldc14_session');
             if (savedSession) {
                 state.currentUser = JSON.parse(savedSession);
+                loadPrefs(state.currentUser.uid);
+            } else {
+                document.documentElement.className = state.theme;
+                updateThemeIcon();
             }
-
-            document.documentElement.className = state.theme;
-            updateThemeIcon();
 
             await fetchCloudData();
             setupRealtimeSubscriptions();
@@ -443,7 +482,6 @@
         // Fetch Data from Supabase Cloud
         async function fetchCloudData() {
             try {
-                // Fetch Users
                 const { data: usersData, error: uError } = await supabaseClient.from('users').select('*');
                 if (!uError && usersData) {
                     state.users = usersData.map(u => ({
@@ -460,7 +498,6 @@
                     }));
                 }
 
-                // Fetch Transactions
                 const { data: txData, error: tError } = await supabaseClient
                     .from('transactions')
                     .select('*')
@@ -482,7 +519,6 @@
                     }));
                 }
 
-                // Keep Current Session User Updated with Cloud Data
                 if (state.currentUser) {
                     const match = state.users.find(u => u.uid === state.currentUser.uid);
                     if (match) state.currentUser = match;
@@ -495,12 +531,57 @@
             }
         }
 
-        // Setup Real-time Listener from Supabase
+        // --- Notifications Manager ---
+        function pushNotification(title, body) {
+            if (Notification.permission === 'granted') {
+                new Notification(title, { body });
+            }
+        }
+
+        async function toggleNotif(key) {
+            if (!state.prefs[key]) {
+                const perm = await Notification.requestPermission();
+                if (perm !== 'granted') {
+                    showToast('โปรดอนุญาตการแจ้งเตือนในเบราว์เซอร์', 'error');
+                    return;
+                }
+            }
+            state.prefs[key] = !state.prefs[key];
+            savePrefs();
+            render();
+        }
+
+        function handleTransactionChange(payload) {
+            if (!state.currentUser) return;
+            
+            const newTx = payload.new;
+            const oldTx = payload.old;
+            const eventType = payload.eventType;
+
+            if (eventType === 'INSERT' && newTx.status === 'pending') {
+                if (state.currentUser.role === 'treasurer' && state.prefs.notifyRequests) {
+                    pushNotification('คำขอใหม่ LDC', `มีคำขอ${newTx.type === 'deposit' ? 'ฝากเงิน' : 'เบิกจ่าย'}ใหม่ ยอด ฿${newTx.amount}`);
+                }
+            }
+
+            if (eventType === 'UPDATE' && newTx.status !== 'pending' && oldTx.status === 'pending') {
+                if ((newTx.requested_by === state.currentUser.uid || newTx.target_user === state.currentUser.uid) && state.prefs.notifyTransactions) {
+                    pushNotification(`LDC: รายการ${newTx.status === 'approved' ? 'อนุมัติ' : 'ถูกปฏิเสธ'}`, `คำขอ ฿${newTx.amount} ของคุณได้รับการอัปเดตแล้ว`);
+                }
+                if (state.currentUser.role === 'treasurer' && newTx.status === 'approved' && state.prefs.notifyTransactions) {
+                    pushNotification(`LDC: เงินเข้า/ออกกองกลาง`, `รายการ ${newTx.type} ฿${newTx.amount} อนุมัติสำเร็จ`);
+                }
+            }
+        }
+
         function setupRealtimeSubscriptions() {
             supabaseClient
                 .channel('public:db_changes')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => fetchCloudData())
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, () => fetchCloudData())
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, (payload) => {
+                    handleTransactionChange(payload);
+                    fetchCloudData();
+                })
                 .subscribe();
         }
 
@@ -516,6 +597,7 @@
             state.theme = state.theme === 'dark' ? 'light' : 'dark';
             document.documentElement.className = state.theme;
             updateThemeIcon();
+            savePrefs();
         }
 
         function updateThemeIcon() {
@@ -530,6 +612,7 @@
         function toggleLang() {
             state.lang = state.lang === 'th' ? 'en' : 'th';
             document.getElementById('langLabel').innerText = state.lang.toUpperCase();
+            savePrefs();
             render();
         }
 
@@ -587,6 +670,20 @@
             closeConfirmModal();
         });
 
+        // --- Transaction Deletion Logic ---
+        function confirmDeleteTx(txId) {
+            showConfirmModal('ยกเลิกคำขอ', 'คุณต้องการยกเลิกและลบคำขอนี้ใช่หรือไม่?', () => executeDeleteTx(txId), true);
+        }
+
+        async function executeDeleteTx(txId) {
+            const { error } = await supabaseClient.from('transactions').delete().eq('id', txId);
+            if (error) {
+                showToast("ยกเลิกคำขอไม่สำเร็จ: " + error.message, "error");
+            } else {
+                showToast("ยกเลิกคำขอเรียบร้อยแล้ว", "success");
+            }
+        }
+
         let authMode = 'login';
 
         function setAuthMode(mode) {
@@ -634,6 +731,7 @@
                 showToast("สแกน Touch ID / Face ID สำเร็จ!", "success");
                 state.currentUser = targetUser;
                 saveLocalSession();
+                loadPrefs(targetUser.uid);
                 render();
             } else {
                 showToast("ยังไม่มีผู้ใช้อยู่ในระบบ กรุณาลงทะเบียนก่อน", "error");
@@ -679,6 +777,7 @@
 
                 state.currentUser = existingUser;
                 saveLocalSession();
+                loadPrefs(existingUser.uid);
                 showToast(t('success'));
                 render();
             } else {
@@ -695,6 +794,8 @@
                     isSetup: false
                 };
                 saveLocalSession();
+                loadPrefs(state.currentUser.uid);
+                savePrefs();
                 showToast(t('success'));
                 render();
             }
@@ -1214,6 +1315,11 @@
                                                                 <i class="fa-solid fa-eye text-[8px]"></i> ${t('viewProof')}
                                                             </button>
                                                         ` : ''}
+                                                        ${tx.status === 'pending' && tx.requestedBy === state.currentUser.uid ? `
+                                                            <button onclick="confirmDeleteTx('${tx.id}')" class="text-[9px] px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-500 flex items-center gap-1 font-semibold">
+                                                                <i class="fa-solid fa-trash text-[8px]"></i> ${t('cancelRequest')}
+                                                            </button>
+                                                        ` : ''}
                                                     </div>
                                                 </div>
                                             </div>
@@ -1332,6 +1438,11 @@
                                                 <label for="proofFile_${tx.id}" class="cursor-pointer px-2.5 py-1 rounded-xl bg-emerald-500 text-white text-[10px] font-bold flex items-center gap-1">
                                                     <i class="fa-solid fa-upload"></i> ${t('uploadProof')}
                                                 </label>
+                                            ` : ''}
+                                            ${tx.status === 'pending' && tx.requestedBy === state.currentUser.uid ? `
+                                                <button onclick="confirmDeleteTx('${tx.id}')" class="text-[10px] px-2.5 py-1 rounded-xl bg-rose-500/10 text-rose-500 font-semibold flex items-center gap-1">
+                                                    <i class="fa-solid fa-trash text-[9px]"></i> ${t('cancelRequest')}
+                                                </button>
                                             ` : ''}
                                         </div>
                                     </div>
@@ -1762,6 +1873,29 @@
                         ` : ''}
                     </div>
 
+                    <!-- ส่วนตั้งค่าการแจ้งเตือน (Notifications) -->
+                    <div class="glass-banking p-4 rounded-3xl space-y-3">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">${t('notifications')}</h3>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-semibold flex items-center gap-1.5"><i class="fa-solid fa-bell text-brand-pink"></i> ${t('notifyTx')}</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" ${state.prefs.notifyTransactions ? 'checked' : ''} onchange="toggleNotif('notifyTransactions')" class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-brand-pink"></div>
+                            </label>
+                        </div>
+
+                        ${u.role === 'treasurer' ? `
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-semibold flex items-center gap-1.5"><i class="fa-solid fa-clipboard-list text-brand-gold"></i> ${t('notifyReq')}</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" ${state.prefs.notifyRequests ? 'checked' : ''} onchange="toggleNotif('notifyRequests')" class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-brand-pink"></div>
+                            </label>
+                        </div>
+                        ` : ''}
+                    </div>
+
                     <div class="grid grid-cols-2 gap-3">
                         <div class="glass-banking p-3.5 rounded-2xl text-center">
                             <p class="text-[10px] text-slate-400 mb-0.5">${t('contributions')}</p>
@@ -1775,11 +1909,11 @@
 
                     <div class="space-y-2">
                         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">${t('history')}</h3>
-                        ${myTx.length === 0 ? `<p class="text-slate-400 text-[10px] text-center py-4">ไม่มีประวัติการชำระเงิน</p>` : ''}
+                        ${myTx.length === 0 ? `<p class="text-slate-400 text-[10px] text-center py-4">ไม่มีประวัติการทำรายการ</p>` : ''}
                         ${myTx.map(tx => {
                             const slip = tx.slipUrl || tx.proofUrl;
                             return `
-                                <div class="glass-banking p-3 rounded-2xl flex items-center justify-between">
+                                <div class="glass-banking p-3 rounded-2xl flex items-center justify-between shadow-sm">
                                     <div class="flex items-center gap-2">
                                         <div class="w-8 h-8 rounded-xl shrink-0 flex items-center justify-center ${
                                             tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-500' :
@@ -1795,6 +1929,11 @@
                                                 ${slip ? `
                                                     <button onclick="openProofModal('${slip}', '${t(tx.type)} - ฿${Number(tx.amount).toLocaleString()}', 'สถานะ: ${t(tx.status)}')" class="text-[8px] px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-500 font-semibold flex items-center gap-0.5">
                                                         <i class="fa-solid fa-eye text-[8px]"></i> ${t('viewProof')}
+                                                    </button>
+                                                ` : ''}
+                                                ${tx.status === 'pending' && tx.requestedBy === state.currentUser.uid ? `
+                                                    <button onclick="confirmDeleteTx('${tx.id}')" class="text-[8px] px-1.5 py-0.5 rounded-md bg-rose-500/10 text-rose-500 font-semibold flex items-center gap-0.5">
+                                                        <i class="fa-solid fa-trash text-[8px]"></i> ${t('cancelRequest')}
                                                     </button>
                                                 ` : ''}
                                             </div>
