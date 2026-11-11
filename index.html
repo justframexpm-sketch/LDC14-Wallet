@@ -161,6 +161,10 @@
                 </div>
             </div>
             <div class="flex gap-2">
+                <button onclick="toggleLang()" class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1">
+                    <i class="ph ph-globe text-sm"></i>
+                    <span id="langLabel">EN</span>
+                </button>
                 <button onclick="toggleTheme()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
                     <i id="themeIcon" class="ph ph-moon text-lg"></i>
                 </button>
@@ -174,7 +178,7 @@
         <main id="mainContainer" class="flex-1 overflow-y-auto no-scrollbar p-6 pb-28">
             <div class="flex flex-col items-center justify-center py-20 text-slate-400">
                 <i class="ph ph-spinner-gap animate-spin text-3xl text-brand-pink mb-3"></i>
-                <p class="text-sm font-light">กำลังเชื่อมต่อระบบ...</p>
+                <p id="connectingText" class="text-sm font-light">กำลังเชื่อมต่อระบบ...</p>
             </div>
         </main>
 
@@ -183,24 +187,24 @@
             <div class="bg-white dark:bg-slate-800 shadow-[0_10px_40px_rgba(0,0,0,0.1)] rounded-full px-4 py-3 flex justify-around items-center border border-slate-100 dark:border-slate-700">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-house text-2xl"></i>
-                    <span class="text-[10px]">หน้าหลัก</span>
+                    <span class="text-[10px]" data-i18n="navHome">หน้าหลัก</span>
                 </button>
                 <button onclick="switchTab('expenses')" id="nav-expenses" class="flex flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-receipt text-2xl"></i>
-                    <span class="text-[10px]">เบิกจ่าย</span>
+                    <span class="text-[10px]" data-i18n="navExpense">เบิกจ่าย</span>
                 </button>
                 <button onclick="switchTab('approvals')" id="nav-approvals" class="hidden flex-col items-center gap-1 text-slate-400 transition-colors w-16 relative hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-check-circle text-2xl"></i>
-                    <span class="text-[10px]">อนุมัติ</span>
+                    <span class="text-[10px]" data-i18n="navApproval">อนุมัติ</span>
                     <span id="nav-badge" class="hidden absolute top-0 right-3 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
                 <button onclick="switchTab('admin')" id="nav-admin" class="hidden flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-users text-2xl"></i>
-                    <span class="text-[10px]">จัดการ</span>
+                    <span class="text-[10px]" data-i18n="navManage">จัดการ</span>
                 </button>
                 <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-slate-400 transition-colors w-16 hover:text-slate-600 dark:hover:text-slate-300">
                     <i class="ph ph-user text-2xl"></i>
-                    <span class="text-[10px]">โปรไฟล์</span>
+                    <span class="text-[10px]" data-i18n="navProfile">โปรไฟล์</span>
                 </button>
             </div>
         </nav>
@@ -266,7 +270,169 @@
         const SUPABASE_KEY = "sb_publishable_W74U6tBhgRDr50YPeNSeSw_EMvYAkLh";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        const i18n = {
+            th: {
+                connecting: "กำลังเชื่อมต่อระบบ...",
+                navHome: "หน้าหลัก",
+                navExpense: "เบิกจ่าย",
+                navApproval: "อนุมัติ",
+                navManage: "จัดการ",
+                navProfile: "โปรไฟล์",
+                login: "เข้าสู่ระบบ",
+                register: "ลงทะเบียน",
+                enterPin: "รหัส 10 หลัก",
+                loginBtn: "เข้าใช้งาน",
+                nextBtn: "ถัดไป",
+                emailPlaceholder: "อีเมล @bu.ac.th / @bumail.net",
+                createProfile: "สร้างโปรไฟล์ของคุณ",
+                profileFor: "ข้อมูลสำหรับบัญชี",
+                uploadPic: "รูปโปรไฟล์",
+                firstName: "ชื่อจริง (ไม่ต้องมีนามสกุล)",
+                nickname: "ชื่อเล่น",
+                saveData: "บันทึกข้อมูล",
+                hello: "สวัสดี,",
+                treasurer: "เหรัญญิก",
+                member: "สมาชิก",
+                fundTotal: "ยอดกองกลาง LDC",
+                lastUpdated: "อัปเดตล่าสุดเมื่อสักครู่",
+                deposit: "ฝากเงิน",
+                reimburse: "เบิกจ่าย",
+                scan: "สแกน",
+                refund: "คืนเงิน",
+                history: "ประวัติ",
+                recentTx: "รายการล่าสุด",
+                noTx: "ยังไม่มีรายการ",
+                depositToFund: "ฝากเงินเข้ากองกลาง",
+                amountThb: "จำนวนเงิน (บาท)",
+                uploadSlip: "อัปโหลดสลิป",
+                confirmTx: "ยืนยันทำรายการ",
+                refundMember: "ทำรายการคืนเงินสมาชิก",
+                treasurerOnly: "(เฉพาะเหรัญญิก)",
+                selectMember: "เลือกสมาชิกที่จะรับเงินคืน",
+                chooseMember: "-- เลือกสมาชิก --",
+                refundReason: "เหตุผลในการคืนเงิน",
+                refundReasonPlaceholder: "เช่น คืนเงินส่วนเกินกิจกรรม, ลาออก",
+                refundAmount: "จำนวนเงินที่คืน (บาท)",
+                attachRefundSlip: "แนบสลิปโอนคืน (ถ้ามี)",
+                approveRefund: "อนุมัติและทำรายการคืนเงิน",
+                financialHistory: "ประวัติการเงิน",
+                editProfile: "แก้ไขข้อมูลส่วนตัว",
+                systemNotif: "การแจ้งเตือนระบบ",
+                notifTx: "รายการเงินเข้า/ออก",
+                notifReq: "คำขอใหม่ (เหรัญญิก)",
+                logout: "ออกจากระบบ",
+                studentId10: "รหัสนักศึกษา (10 หลัก)",
+                cancel: "ยกเลิก",
+                save: "บันทึก",
+                changePic: "เปลี่ยนรูปโปรไฟล์",
+                claimReimburse: "ยื่นขอเบิกจ่าย",
+                itemTitle: "รายการ / ชื่องาน",
+                itemPlaceholder: "เช่น ค่าอุปกรณ์กิจกรรม",
+                confirmClaim: "ยืนยันการเบิก",
+                noExpense: "ยังไม่มีรายการเบิกจ่าย",
+                viewReceipt: "ดูใบเสร็จ",
+                uploadReceipt: "อัปโหลดใบเสร็จ",
+                deleteItem: "ลบรายการ",
+                pendingApprovals: "รออนุมัติ",
+                noPending: "ไม่มีรายการรอตรวจสอบ",
+                viewSlip: "ดูสลิป",
+                manageMembers: "จัดการสมาชิก",
+                userRole: "ระดับสิทธิ์การใช้งาน",
+                memberRole: "สมาชิก (Member)",
+                treasurerRole: "เหรัญญิก (Treasurer)",
+                statusApproved: "สำเร็จ",
+                statusRejected: "ถูกปฎิเสธ",
+                statusPending: "รอตรวจสอบ",
+                depositLabel: "โอนเงินเข้ากองกลาง",
+                refundLabel: "ได้รับเงินคืน",
+                confirmDeleteTitle: "ลบรายการ",
+                confirmDeleteMsg: "คุณต้องการลบรายการนี้ใช่หรือไม่? (การกระทำนี้จะลบรายการออกจากระบบถาวร)",
+                confirmDeleteUserTitle: "ลบสมาชิก",
+                ok: "ตกลง"
+            },
+            en: {
+                connecting: "Connecting...",
+                navHome: "Home",
+                navExpense: "Claim",
+                navApproval: "Approve",
+                navManage: "Manage",
+                navProfile: "Profile",
+                login: "Sign In",
+                register: "Register",
+                enterPin: "10-Digit ID",
+                loginBtn: "Login",
+                nextBtn: "Next",
+                emailPlaceholder: "Email @bu.ac.th / @bumail.net",
+                createProfile: "Create Your Profile",
+                profileFor: "Account Info for",
+                uploadPic: "Profile Photo",
+                firstName: "First Name",
+                nickname: "Nickname",
+                saveData: "Save Profile",
+                hello: "Hello,",
+                treasurer: "Treasurer",
+                member: "Member",
+                fundTotal: "LDC Total Balance",
+                lastUpdated: "Updated just now",
+                deposit: "Deposit",
+                reimburse: "Claim",
+                scan: "Scan",
+                refund: "Refund",
+                history: "History",
+                recentTx: "Recent Transactions",
+                noTx: "No transactions found",
+                depositToFund: "Deposit to Fund",
+                amountThb: "Amount (THB)",
+                uploadSlip: "Upload Slip",
+                confirmTx: "Confirm Transaction",
+                refundMember: "Refund to Member",
+                treasurerOnly: "(Treasurer Only)",
+                selectMember: "Select Member to Refund",
+                chooseMember: "-- Select Member --",
+                refundReason: "Reason for Refund",
+                refundReasonPlaceholder: "e.g., Activity refund, resignation",
+                refundAmount: "Refund Amount (THB)",
+                attachRefundSlip: "Attach Refund Slip (Optional)",
+                approveRefund: "Approve & Refund",
+                financialHistory: "Financial History",
+                editProfile: "Edit Profile",
+                systemNotif: "Notifications",
+                notifTx: "Transactions Alert",
+                notifReq: "New Requests (Treasurer)",
+                logout: "Sign Out",
+                studentId10: "Student ID (10 Digits)",
+                cancel: "Cancel",
+                save: "Save",
+                changePic: "Change Photo",
+                claimReimburse: "Request Reimbursement",
+                itemTitle: "Title / Description",
+                itemPlaceholder: "e.g., Event supplies",
+                confirmClaim: "Submit Claim",
+                noExpense: "No reimbursement claims",
+                viewReceipt: "Receipt",
+                uploadReceipt: "Upload Receipt",
+                deleteItem: "Delete",
+                pendingApprovals: "Pending Approvals",
+                noPending: "No pending items",
+                viewSlip: "View Slip",
+                manageMembers: "Manage Members",
+                userRole: "Role Permission",
+                memberRole: "Member",
+                treasurerRole: "Treasurer",
+                statusApproved: "Approved",
+                statusRejected: "Rejected",
+                statusPending: "Pending",
+                depositLabel: "Deposit to Fund",
+                refundLabel: "Refund Received",
+                confirmDeleteTitle: "Delete Transaction",
+                confirmDeleteMsg: "Are you sure you want to delete this transaction permanently?",
+                confirmDeleteUserTitle: "Delete Member",
+                ok: "OK"
+            }
+        };
+
         let state = {
+            lang: localStorage.getItem('ldc14_lang') || 'th',
             theme: 'light',
             currentUser: null,
             users: [],
@@ -277,7 +443,19 @@
             deviceId: 'dev_' + Math.random().toString(36).substr(2, 9)
         };
 
+        function t(key) {
+            return (i18n[state.lang] && i18n[state.lang][key]) || (i18n['th'][key]) || key;
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'th' ? 'en' : 'th';
+            localStorage.setItem('ldc14_lang', state.lang);
+            document.getElementById('langLabel').innerText = state.lang.toUpperCase();
+            render();
+        }
+
         async function initData() {
+            document.getElementById('langLabel').innerText = state.lang.toUpperCase();
             const savedSession = localStorage.getItem('ldc14_minimal_session');
             if (savedSession) state.currentUser = JSON.parse(savedSession);
             
@@ -385,30 +563,30 @@
             e.preventDefault();
             const email = document.getElementById('authEmail').value.trim().toLowerCase();
             const pin = state.enteredPin;
-            if (pin.length !== 10) return showToast('กรุณากรอกรหัส 10 หลัก', true);
+            if (pin.length !== 10) return showToast(state.lang === 'th' ? 'กรุณากรอกรหัส 10 หลัก' : 'Please enter 10 digits', true);
 
             if (authMode === 'login') {
                 const user = state.users.find(u => u.email === email && u.studentId === pin);
-                if (!user) return showToast('อีเมลหรือรหัส 10 หลักไม่ถูกต้อง', true);
+                if (!user) return showToast(state.lang === 'th' ? 'อีเมลหรือรหัส 10 หลักไม่ถูกต้อง' : 'Invalid email or 10-digit ID', true);
                 
                 state.currentUser = user;
                 localStorage.setItem('ldc14_minimal_session', JSON.stringify(user));
-                showToast('เข้าสู่ระบบสำเร็จ');
+                showToast(state.lang === 'th' ? 'เข้าสู่ระบบสำเร็จ' : 'Logged in successfully');
                 render();
             } else {
                 const domain = email.split('@')[1];
                 if (domain !== 'bu.ac.th' && domain !== 'bumail.net') {
-                    return showToast('ใช้อีเมล @bu.ac.th หรือ @bumail.net เท่านั้น', true);
+                    return showToast(state.lang === 'th' ? 'ใช้อีเมล @bu.ac.th หรือ @bumail.net เท่านั้น' : 'Use @bu.ac.th or @bumail.net only', true);
                 }
                 
                 const existingByEmail = state.users.find(u => u.email === email);
-                if (existingByEmail) return showToast('อีเมลนี้ลงทะเบียนแล้ว', true);
+                if (existingByEmail) return showToast(state.lang === 'th' ? 'อีเมลนี้ลงทะเบียนแล้ว' : 'Email already registered', true);
                 
                 const existingByPin = state.users.filter(u => u.studentId === pin);
-                if (existingByPin.length >= 2) return showToast('รหัสนักศึกษานี้ลงทะเบียนครบ 2 บัญชีแล้ว', true);
+                if (existingByPin.length >= 2) return showToast(state.lang === 'th' ? 'รหัสนักศึกษานี้ลงทะเบียนครบ 2 บัญชีแล้ว' : 'Student ID reached 2 accounts limit', true);
                 
                 const sameDomain = existingByPin.find(u => u.email.endsWith('@' + domain));
-                if (sameDomain) return showToast(`โดเมน @${domain} ถูกใช้สำหรับรหัสนี้ไปแล้ว`, true);
+                if (sameDomain) return showToast(state.lang === 'th' ? `โดเมน @${domain} ถูกใช้สำหรับรหัสนี้ไปแล้ว` : `Domain @${domain} already registered for this ID`, true);
 
                 state.currentUser = { uid: 'user_' + Date.now(), email, studentId: pin, isSetup: false };
                 render();
@@ -421,7 +599,7 @@
             const nickname = document.getElementById('ob_nickname').value;
             const submitBtn = document.getElementById('ob_submit_btn');
             
-            submitBtn.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-xl"></i> กำลังบันทึก...';
+            submitBtn.innerHTML = `<i class="ph ph-spinner-gap animate-spin text-xl"></i> ${state.lang === 'th' ? 'กำลังบันทึก...' : 'Saving...'}`;
             submitBtn.disabled = true;
             
             const newUser = {
@@ -439,9 +617,9 @@
             const { error } = await supabaseClient.from('users').insert([newUser]);
             
             if (error) {
-                submitBtn.innerHTML = 'บันทึกข้อมูล';
+                submitBtn.innerHTML = t('saveData');
                 submitBtn.disabled = false;
-                return showToast('เกิดข้อผิดพลาด: ' + error.message, true);
+                return showToast('Error: ' + error.message, true);
             }
 
             state.currentUser = {
@@ -463,7 +641,7 @@
             state.activeTab = 'dashboard';
             
             render();
-            showToast('สร้างโปรไฟล์สำเร็จ');
+            showToast(state.lang === 'th' ? 'สร้างโปรไฟล์สำเร็จ' : 'Profile created');
             fetchCloudData(); 
         }
 
@@ -500,7 +678,7 @@
         function openProofModal(url, title, subtitle) {
             currentProofUrl = url;
             document.getElementById('modalImg').src = url;
-            document.getElementById('modalTitle').innerText = title || 'หลักฐาน';
+            document.getElementById('modalTitle').innerText = title || (state.lang === 'th' ? 'หลักฐาน' : 'Proof');
             document.getElementById('modalSubtitle').innerText = subtitle || '';
             document.getElementById('proofModal').classList.remove('hidden');
         }
@@ -509,6 +687,12 @@
             const container = document.getElementById('mainContainer');
             const nav = document.getElementById('bottomNav');
             const logoutBtn = document.getElementById('logoutBtn');
+
+            // Update static i18n text
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (key) el.innerText = t(key);
+            });
 
             if (!state.currentUser) {
                 nav.classList.add('hidden'); logoutBtn.classList.add('hidden');
@@ -566,18 +750,18 @@
                     <div class="w-20 h-20 rounded-[24px] bg-brand-pink/10 flex items-center justify-center mb-6">
                         <i class="ph ph-piggy-bank text-4xl text-brand-pinkDark"></i>
                     </div>
-                    <h2 class="text-2xl font-bold mb-1">${authMode === 'login' ? 'เข้าสู่ระบบ' : 'ลงทะเบียน'}</h2>
+                    <h2 class="text-2xl font-bold mb-1">${authMode === 'login' ? t('login') : t('register')}</h2>
                     <p class="text-sm font-light text-slate-400 mb-8">LDC Wallet Gen 14</p>
 
                     <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full mb-6 w-64">
-                        <button onclick="setAuthMode('login')" class="flex-1 py-2 text-sm font-medium rounded-full transition-colors ${authMode==='login'?'bg-white dark:bg-slate-700 shadow-sm text-brand-pinkDark':'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">เข้าสู่ระบบ</button>
-                        <button onclick="setAuthMode('register')" class="flex-1 py-2 text-sm font-medium rounded-full transition-colors ${authMode==='register'?'bg-white dark:bg-slate-700 shadow-sm text-brand-pinkDark':'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">ลงทะเบียน</button>
+                        <button onclick="setAuthMode('login')" class="flex-1 py-2 text-sm font-medium rounded-full transition-colors ${authMode==='login'?'bg-white dark:bg-slate-700 shadow-sm text-brand-pinkDark':'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">${t('login')}</button>
+                        <button onclick="setAuthMode('register')" class="flex-1 py-2 text-sm font-medium rounded-full transition-colors ${authMode==='register'?'bg-white dark:bg-slate-700 shadow-sm text-brand-pinkDark':'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">${t('register')}</button>
                     </div>
 
                     <form onsubmit="submitAuth(event)" class="w-full">
-                        <input type="email" id="authEmail" required placeholder="อีเมล @bu.ac.th / @bumail.net" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-brand-pinkLight text-center text-sm mb-4">
+                        <input type="email" id="authEmail" required placeholder="${t('emailPlaceholder')}" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-brand-pinkLight text-center text-sm mb-4">
                         
-                        <div class="text-center mb-2 text-sm font-medium text-slate-500">รหัส 10 หลัก</div>
+                        <div class="text-center mb-2 text-sm font-medium text-slate-500">${t('enterPin')}</div>
                         <div id="pinDots" class="flex justify-center mb-6 h-4 items-center"></div>
 
                         <div class="grid grid-cols-3 gap-y-4 gap-x-2 mb-8">
@@ -588,7 +772,7 @@
                         </div>
                         
                         <button type="submit" class="w-full py-4 rounded-full bg-brand-pink text-white font-bold text-lg shadow-soft hover:bg-brand-pinkDark transition-colors">
-                            ${authMode === 'login' ? 'เข้าใช้งาน' : 'ถัดไป'}
+                            ${authMode === 'login' ? t('loginBtn') : t('nextBtn')}
                         </button>
                     </form>
                 </div>
@@ -598,8 +782,8 @@
         function renderOnboarding() {
             return `
                 <div class="pt-4 max-w-md mx-auto">
-                    <h2 class="text-xl font-bold mb-2">สร้างโปรไฟล์ของคุณ</h2>
-                    <p class="text-sm text-slate-400 mb-6 font-light">ข้อมูลสำหรับบัญชี ${state.currentUser.studentId}</p>
+                    <h2 class="text-xl font-bold mb-2">${t('createProfile')}</h2>
+                    <p class="text-sm text-slate-400 mb-6 font-light">${t('profileFor')} ${state.currentUser.studentId}</p>
                     
                     <form onsubmit="saveOnboarding(event)" class="space-y-4">
                         <div class="flex justify-center mb-2">
@@ -607,22 +791,22 @@
                             <label for="ob_pic" class="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center text-slate-400 cursor-pointer border-2 border-dashed border-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                 <div id="ob_preview" class="w-full h-full flex flex-col items-center justify-center rounded-full overflow-hidden">
                                     <i class="ph ph-camera text-2xl mb-1"></i>
-                                    <span class="text-[10px]">รูปโปรไฟล์</span>
+                                    <span class="text-[10px]">${t('uploadPic')}</span>
                                 </div>
                             </label>
                         </div>
                         
                         <div>
-                            <label class="text-xs font-medium text-slate-500 ml-2 block">ชื่อจริง (ไม่ต้องมีนามสกุล)</label>
+                            <label class="text-xs font-medium text-slate-500 ml-2 block">${t('firstName')}</label>
                             <input type="text" id="ob_name" required class="w-full mt-1 px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-brand-pinkLight text-sm text-slate-800 dark:text-white">
                         </div>
                         <div>
-                            <label class="text-xs font-medium text-slate-500 ml-2 block">ชื่อเล่น</label>
+                            <label class="text-xs font-medium text-slate-500 ml-2 block">${t('nickname')}</label>
                             <input type="text" id="ob_nickname" required class="w-full mt-1 px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-brand-pinkLight text-sm text-slate-800 dark:text-white">
                         </div>
                         
                         <button id="ob_submit_btn" type="submit" class="w-full py-4 flex justify-center items-center gap-2 rounded-full bg-brand-pink text-white font-bold shadow-soft mt-4 hover:bg-brand-pinkDark transition-colors">
-                            บันทึกข้อมูล
+                            ${t('saveData')}
                         </button>
                     </form>
                 </div>
@@ -645,14 +829,14 @@
                                 ${state.currentUser.photoUrl ? `<img src="${state.currentUser.photoUrl}" class="w-full h-full object-cover">` : `<i class="ph ph-user text-xl text-slate-400"></i>`}
                             </div>
                             <div>
-                                <p class="text-xs text-slate-400 font-light">สวัสดี,</p>
-                                <h2 class="font-bold text-lg leading-none">${state.currentUser.nickname} ${isTreasurer ? '<span class="text-[10px] bg-brand-pinkLight/40 text-brand-pinkDark px-2 py-0.5 rounded-full font-bold ml-1">เหรัญญิก</span>' : ''}</h2>
+                                <p class="text-xs text-slate-400 font-light">${t('hello')}</p>
+                                <h2 class="font-bold text-lg leading-none">${state.currentUser.nickname} ${isTreasurer ? `<span class="text-[10px] bg-brand-pinkLight/40 text-brand-pinkDark px-2 py-0.5 rounded-full font-bold ml-1">${t('treasurer')}</span>` : ''}</h2>
                             </div>
                         </div>
 
                         <div class="balance-card rounded-3xl p-6 text-white shadow-soft">
                             <div class="flex justify-between items-start mb-4">
-                                <span class="text-xs font-medium opacity-90">ยอดกองกลาง LDC</span>
+                                <span class="text-xs font-medium opacity-90">${t('fundTotal')}</span>
                                 <button onclick="state.hideBalance = !state.hideBalance; render();" class="text-white/80 hover:text-white transition-colors">
                                     <i class="ph ${state.hideBalance ? 'ph-eye-closed' : 'ph-eye'} text-lg"></i>
                                 </button>
@@ -661,31 +845,31 @@
                                 <span class="text-2xl mr-1">฿</span>
                                 ${state.hideBalance ? '****' : bal.toLocaleString()}
                             </h3>
-                            <p class="text-[10px] opacity-70 mt-4 font-light">อัปเดตล่าสุดเมื่อสักครู่</p>
+                            <p class="text-[10px] opacity-70 mt-4 font-light">${t('lastUpdated')}</p>
                         </div>
 
                         <div class="grid grid-cols-4 gap-3">
                             <button onclick="document.getElementById('actionModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
                                 <div class="w-12 h-12 rounded-2xl bg-brand-pinkLight/30 text-brand-pinkDark flex items-center justify-center text-2xl"><i class="ph ph-arrow-down-left"></i></div>
-                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">ฝากเงิน</span>
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('deposit')}</span>
                             </button>
                             <button onclick="switchTab('expenses')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
                                 <div class="w-12 h-12 rounded-2xl bg-brand-goldLight/50 text-yellow-600 flex items-center justify-center text-2xl"><i class="ph ph-arrow-up-right"></i></div>
-                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">เบิกจ่าย</span>
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('reimburse')}</span>
                             </button>
                             <button onclick="document.getElementById('scanModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
                                 <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-2xl"><i class="ph ph-qr-code"></i></div>
-                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">สแกน</span>
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('scan')}</span>
                             </button>
                             ${isTreasurer ? `
                             <button onclick="document.getElementById('refundModal').classList.remove('hidden')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
                                 <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-500 flex items-center justify-center text-2xl"><i class="ph ph-hand-coins"></i></div>
-                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">คืนเงิน</span>
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('refund')}</span>
                             </button>
                             ` : `
                             <button onclick="switchTab('profile')" class="flex flex-col items-center gap-2 transition-transform active:scale-95 hover:opacity-80">
                                 <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-2xl"><i class="ph ph-clock-counter-clockwise"></i></div>
-                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">ประวัติ</span>
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${t('history')}</span>
                             </button>
                             `}
                         </div>
@@ -694,14 +878,14 @@
                     <!-- Right Column: Transactions History -->
                     <div class="lg:col-span-2 md:col-span-1 space-y-3">
                         <div class="flex justify-between items-center mb-3">
-                            <h4 class="font-bold text-slate-800 dark:text-white">รายการล่าสุด</h4>
+                            <h4 class="font-bold text-slate-800 dark:text-white">${t('recentTx')}</h4>
                         </div>
                         <div class="space-y-3">
                             ${state.transactions.slice(0, 10).map(tx => {
                                 const isDep = tx.type === 'deposit';
                                 const isRef = tx.type === 'refund';
                                 const u = state.users.find(x => x.uid === (tx.targetUser || tx.requestedBy)) || {};
-                                const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงินสมาชิก' : (tx.description || 'เบิกจ่าย')}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
+                                const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? t('deposit') : isRef ? t('refund') : (tx.description || t('reimburse'))}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
                                 
                                 return `
                                 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl flex items-center gap-3 shadow-card border border-slate-50 dark:border-slate-700/50 ${proofAction ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors' : ''}" ${proofAction}>
@@ -709,10 +893,10 @@
                                         <i class="ph ${isDep ? 'ph-arrow-down-left' : isRef ? 'ph-hand-coins' : 'ph-arrow-up-right'}"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-semibold text-sm truncate">${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงินสมาชิก (' + (tx.description || '') + ')' : (tx.description || 'เบิกจ่าย')}</p>
+                                        <p class="font-semibold text-sm truncate">${isDep ? t('deposit') : isRef ? t('refund') + ' (' + (tx.description || '') + ')' : (tx.description || t('reimburse'))}</p>
                                         <div class="flex gap-2 items-center">
                                             <p class="text-[10px] text-slate-400">${u.nickname || 'User'}</p>
-                                            <span class="text-[9px] px-1.5 py-[2px] rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600 dark:bg-green-500/20':tx.status==='rejected'?'bg-red-100 text-red-600 dark:bg-red-500/20':'bg-orange-100 text-orange-600 dark:bg-orange-500/20'}">${tx.status==='approved'?'สำเร็จ':tx.status==='rejected'?'ถูกปฎิเสธ':'รอตรวจสอบ'}</span>
+                                            <span class="text-[9px] px-1.5 py-[2px] rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600 dark:bg-green-500/20':tx.status==='rejected'?'bg-red-100 text-red-600 dark:bg-red-500/20':'bg-orange-100 text-orange-600 dark:bg-orange-500/20'}">${tx.status==='approved'?t('statusApproved'):tx.status==='rejected'?t('statusRejected'):t('statusPending')}</span>
                                         </div>
                                     </div>
                                     <div class="text-right shrink-0">
@@ -722,12 +906,12 @@
                                         ${(tx.slipUrl || tx.proofUrl) ? `<i class="ph ph-image text-slate-300 text-xs mt-0.5 inline-block"></i>` : ''}
                                     </div>
                                     ${state.currentUser.role === 'treasurer' ? `
-                                        <button onclick="event.stopPropagation(); confirmDeleteTx('${tx.id}')" title="ลบรายการ" class="ml-2 w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
+                                        <button onclick="event.stopPropagation(); confirmDeleteTx('${tx.id}')" title="${t('deleteItem')}" class="ml-2 w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
                                             <i class="ph ph-trash text-sm"></i>
                                         </button>
                                     ` : ''}
                                 </div>`;
-                            }).join('') || '<p class="text-center text-sm font-light text-slate-400 py-10">ยังไม่มีรายการ</p>'}
+                            }).join('') || `<p class="text-center text-sm font-light text-slate-400 py-10">${t('noTx')}</p>`}
                         </div>
                     </div>
                 </div>
@@ -736,14 +920,14 @@
                 <div id="actionModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center md:items-center items-end justify-center">
                     <div class="bg-white dark:bg-slate-800 w-full rounded-t-3xl md:rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-lg">ฝากเงินเข้ากองกลาง</h3>
+                            <h3 class="font-bold text-lg">${t('depositToFund')}</h3>
                             <button onclick="document.getElementById('actionModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
                         </div>
                         <form onsubmit="submitDeposit(event)" class="space-y-4">
                             <img src="image_14736d.jpg" class="w-full max-w-[200px] mx-auto rounded-2xl shadow-sm mb-4" alt="Thai QR Payment">
                             
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">จำนวนเงิน (บาท)</label>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('amountThb')}</label>
                                 <input type="number" id="dep_amt" required placeholder="0.00" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
                             </div>
                             <div>
@@ -751,11 +935,11 @@
                                 <label for="dep_slip" class="block w-full py-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                     <div id="dep_preview" class="text-slate-400 flex flex-col items-center">
                                         <i class="ph ph-upload-simple text-3xl mb-2 text-slate-300"></i>
-                                        <span class="text-xs font-medium">อัปโหลดสลิป</span>
+                                        <span class="text-xs font-medium">${t('uploadSlip')}</span>
                                     </div>
                                 </label>
                             </div>
-                            <button type="submit" class="w-full py-4 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors shadow-soft">ยืนยันทำรายการ</button>
+                            <button type="submit" class="w-full py-4 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors shadow-soft">${t('confirmTx')}</button>
                         </form>
                     </div>
                 </div>
@@ -766,25 +950,25 @@
                     <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4">
                         <div class="flex justify-between items-center mb-4">
                             <div>
-                                <h3 class="font-bold text-lg">ทำรายการคืนเงินสมาชิก</h3>
-                                <p class="text-xs text-slate-400 font-light">(เฉพาะเหรัญญิก)</p>
+                                <h3 class="font-bold text-lg">${t('refundMember')}</h3>
+                                <p class="text-xs text-slate-400 font-light">${t('treasurerOnly')}</p>
                             </div>
                             <button onclick="document.getElementById('refundModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
                         </div>
                         <form onsubmit="submitTreasurerRefund(event)" class="space-y-4">
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">เลือกสมาชิกที่จะรับเงินคืน</label>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('selectMember')}</label>
                                 <select id="ref_target_user" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
-                                    <option value="">-- เลือกสมาชิก --</option>
+                                    <option value="">${t('chooseMember')}</option>
                                     ${state.users.map(u => `<option value="${u.uid}">${u.name} (${u.nickname}) - ${u.studentId}</option>`).join('')}
                                 </select>
                             </div>
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">เหตุผลในการคืนเงิน</label>
-                                <input type="text" id="ref_reason" required placeholder="เช่น คืนเงินส่วนเกินกิจกรรม, ลาออก" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('refundReason')}</label>
+                                <input type="text" id="ref_reason" required placeholder="${t('refundReasonPlaceholder')}" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
                             </div>
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">จำนวนเงินที่คืน (บาท)</label>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('refundAmount')}</label>
                                 <input type="number" id="ref_amt" required placeholder="0.00" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
                             </div>
                             <div>
@@ -792,11 +976,11 @@
                                 <label for="ref_slip" class="block w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                     <div id="ref_preview" class="text-slate-400 flex flex-col items-center">
                                         <i class="ph ph-upload-simple text-2xl mb-1 text-slate-300"></i>
-                                        <span class="text-xs font-medium">แนบสลิปโอนคืน (ถ้ามี)</span>
+                                        <span class="text-xs font-medium">${t('attachRefundSlip')}</span>
                                     </div>
                                 </label>
                             </div>
-                            <button type="submit" class="w-full py-4 rounded-full bg-purple-500 hover:bg-purple-600 text-white font-bold transition-colors mt-2 shadow-soft">อนุมัติและทำรายการคืนเงิน</button>
+                            <button type="submit" class="w-full py-4 rounded-full bg-purple-500 hover:bg-purple-600 text-white font-bold transition-colors mt-2 shadow-soft">${t('approveRefund')}</button>
                         </form>
                     </div>
                 </div>
@@ -807,11 +991,11 @@
         async function submitDeposit(e) {
             e.preventDefault();
             const amt = document.getElementById('dep_amt').value;
-            if(!amt || !uploadedImageTemp) return showToast('กรุณากรอกข้อมูลและแนบรูปสลิปให้ครบถ้วน', true);
+            if(!amt || !uploadedImageTemp) return showToast(state.lang === 'th' ? 'กรุณากรอกข้อมูลและแนบรูปสลิปให้ครบถ้วน' : 'Please fill all details and slip', true);
             
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
-            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> กำลังส่ง...';
+            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> Loading...';
             btn.disabled = true;
 
             const { error } = await supabaseClient.from('transactions').insert([{ 
@@ -830,13 +1014,13 @@
             
             document.getElementById('actionModal').classList.add('hidden');
             uploadedImageTemp = ''; 
-            showToast('ส่งรายการสำเร็จ รอการตรวจสอบ');
+            showToast(state.lang === 'th' ? 'ส่งรายการสำเร็จ รอการตรวจสอบ' : 'Submitted successfully');
         }
 
         async function submitTreasurerRefund(e) {
             e.preventDefault();
             if (state.currentUser.role !== 'treasurer') {
-                return showToast('เฉพาะเหรัญญิกเท่านั้นที่สามารถทำรายการคืนเงินได้', true);
+                return showToast(state.lang === 'th' ? 'เฉพาะเหรัญญิกเท่านั้นที่สามารถทำรายการคืนเงินได้' : 'Treasurer access only', true);
             }
 
             const targetUid = document.getElementById('ref_target_user').value;
@@ -844,12 +1028,12 @@
             const amt = document.getElementById('ref_amt').value;
             
             if (!targetUid || !reason || !amt) {
-                return showToast('กรุณากรอกข้อมูลให้ครบถ้วน', true);
+                return showToast(state.lang === 'th' ? 'กรุณากรอกข้อมูลให้ครบถ้วน' : 'Please fill all fields', true);
             }
 
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
-            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> กำลังบันทึก...';
+            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> Loading...';
             btn.disabled = true;
 
             const { error } = await supabaseClient.from('transactions').insert([{ 
@@ -870,7 +1054,7 @@
             
             document.getElementById('refundModal').classList.add('hidden');
             uploadedImageTemp = '';
-            showToast('ทำรายการคืนเงินสำเร็จ');
+            showToast(state.lang === 'th' ? 'ทำรายการคืนเงินสำเร็จ' : 'Refund successful');
         }
 
         let isEditingProfile = false;
@@ -886,10 +1070,10 @@
             
             const newStudentId = document.getElementById('edit_studentId').value.trim();
             if (!/^\d{10}$/.test(newStudentId)) {
-                return showToast('กรุณากรอกรหัสนักศึกษา 10 หลัก', true);
+                return showToast(state.lang === 'th' ? 'กรุณากรอกรหัสนักศึกษา 10 หลัก' : '10 digits required', true);
             }
 
-            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> กำลังบันทึก...';
+            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> Loading...';
             btn.disabled = true;
 
             const updatePayload = {
@@ -902,10 +1086,10 @@
 
             const { error } = await supabaseClient.from('users').update(updatePayload).eq('uid', state.currentUser.uid);
             
-            btn.innerHTML = 'บันทึก';
+            btn.innerHTML = t('save');
             btn.disabled = false;
             
-            if (error) return showToast("แก้ไขโปรไฟล์ไม่สำเร็จ: " + error.message, true);
+            if (error) return showToast("Update error: " + error.message, true);
 
             uploadedImageTemp = '';
             isEditingProfile = false;
@@ -917,7 +1101,7 @@
             if (updatePayload.photo_url) state.currentUser.photoUrl = updatePayload.photo_url;
             
             localStorage.setItem('ldc14_minimal_session', JSON.stringify(state.currentUser));
-            showToast('บันทึกโปรไฟล์สำเร็จ');
+            showToast(state.lang === 'th' ? 'บันทึกโปรไฟล์สำเร็จ' : 'Profile saved');
             render();
         }
         
@@ -927,7 +1111,7 @@
             if(state.prefs[key] && Notification.permission === 'default') {
                 await Notification.requestPermission();
             }
-            showToast('อัปเดตการตั้งค่าแจ้งเตือนแล้ว');
+            showToast(state.lang === 'th' ? 'อัปเดตการตั้งค่าแจ้งเตือนแล้ว' : 'Notification updated');
             render();
         }
 
@@ -938,7 +1122,7 @@
             
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
-            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> กำลังส่ง...';
+            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> Loading...';
             btn.disabled = true;
 
             const { error } = await supabaseClient.from('transactions').insert([{
@@ -955,7 +1139,7 @@
             
             if (error) return showToast(error.message, true);
             document.getElementById('expenseModal').classList.add('hidden');
-            showToast('ยื่นขอเบิกจ่ายสำเร็จ');
+            showToast(state.lang === 'th' ? 'ยื่นขอเบิกจ่ายสำเร็จ' : 'Claim submitted');
         }
 
         function uploadExpenseProof(event, txId) {
@@ -964,47 +1148,49 @@
             const reader = new FileReader();
             reader.onloadend = async () => {
                 const { error } = await supabaseClient.from('transactions').update({ proof_url: reader.result }).eq('id', txId);
-                if (error) showToast("อัปโหลดไม่สำเร็จ", true);
-                else showToast('อัปโหลดใบเสร็จสำเร็จ');
+                if (error) showToast("Upload failed", true);
+                else showToast(state.lang === 'th' ? 'อัปโหลดใบเสร็จสำเร็จ' : 'Receipt uploaded');
             };
             reader.readAsDataURL(file);
         }
         
         function confirmDeleteTx(txId) {
-            document.getElementById('confirmModalTitle').innerText = 'ลบรายการ';
-            document.getElementById('confirmModalMsg').innerText = 'คุณต้องการลบรายการนี้ใช่หรือไม่? (การกระทำนี้จะลบรายการออกจากระบบถาวร)';
+            document.getElementById('confirmModalTitle').innerText = t('confirmDeleteTitle');
+            document.getElementById('confirmModalMsg').innerText = t('confirmDeleteMsg');
             const actionBtn = document.getElementById('confirmModalActionBtn');
+            actionBtn.innerText = t('ok');
             actionBtn.onclick = async () => {
                 closeConfirmModal();
                 const { error } = await supabaseClient.from('transactions').delete().eq('id', txId);
-                if(error) showToast("เกิดข้อผิดพลาดในการลบ: " + error.message, true);
-                else showToast("ลบรายการแล้ว");
+                if(error) showToast("Delete error: " + error.message, true);
+                else showToast(state.lang === 'th' ? 'ลบรายการแล้ว' : 'Transaction deleted');
             };
             document.getElementById('confirmModal').classList.remove('hidden');
         }
 
         async function updateTxStatus(txId, status) {
             const { error } = await supabaseClient.from('transactions').update({ status }).eq('id', txId);
-            if (error) showToast("อัปเดตไม่สำเร็จ", true);
-            else showToast('ทำรายการสำเร็จ');
+            if (error) showToast("Update failed", true);
+            else showToast(state.lang === 'th' ? 'ทำรายการสำเร็จ' : 'Status updated');
         }
 
         async function changeUserRole(uid, role) {
             const { error } = await supabaseClient.from('users').update({ role }).eq('uid', uid);
-            if (error) showToast("เปลี่ยนสิทธิ์ไม่สำเร็จ", true);
-            else showToast('อัปเดตสิทธิ์สำเร็จ');
+            if (error) showToast("Role change failed", true);
+            else showToast(state.lang === 'th' ? 'อัปเดตสิทธิ์สำเร็จ' : 'Role updated');
         }
         
         function confirmDeleteUser(uid) {
             const user = state.users.find(u => u.uid === uid);
-            document.getElementById('confirmModalTitle').innerText = 'ลบสมาชิก';
-            document.getElementById('confirmModalMsg').innerText = `ยืนยันการลบ ${user.name} ออกจากระบบ?`;
+            document.getElementById('confirmModalTitle').innerText = t('confirmDeleteUserTitle');
+            document.getElementById('confirmModalMsg').innerText = `${state.lang === 'th' ? 'ยืนยันการลบ' : 'Delete'} ${user.name}?`;
             const actionBtn = document.getElementById('confirmModalActionBtn');
+            actionBtn.innerText = t('ok');
             actionBtn.onclick = async () => {
                 closeConfirmModal();
                 const { error } = await supabaseClient.from('users').delete().eq('uid', uid);
-                if(error) showToast("ลบไม่สำเร็จ", true);
-                else showToast("ลบสมาชิกแล้ว");
+                if(error) showToast("Delete failed", true);
+                else showToast(state.lang === 'th' ? 'ลบสมาชิกแล้ว' : 'User deleted');
             };
             document.getElementById('confirmModal').classList.remove('hidden');
         }
@@ -1014,14 +1200,14 @@
             return `
                 <div class="space-y-4 pb-20 max-w-2xl mx-auto">
                     <div class="flex justify-between items-center px-1 mb-4">
-                        <h2 class="font-bold text-xl text-slate-800 dark:text-white">เบิกจ่าย</h2>
+                        <h2 class="font-bold text-xl text-slate-800 dark:text-white">${t('navExpense')}</h2>
                         <button onclick="document.getElementById('expenseModal').classList.remove('hidden')" class="px-4 py-2 bg-brand-pink text-white rounded-full text-xs font-bold shadow-soft flex items-center gap-1.5 hover:bg-brand-pinkDark transition-colors">
-                            <i class="ph ph-plus-circle text-base"></i> ขอเบิก
+                            <i class="ph ph-plus-circle text-base"></i> ${t('reimburse')}
                         </button>
                     </div>
 
                     <div class="space-y-3">
-                        ${expenses.length === 0 ? '<p class="text-center text-sm font-light text-slate-400 py-10">ยังไม่มีรายการเบิกจ่าย</p>' : ''}
+                        ${expenses.length === 0 ? `<p class="text-center text-sm font-light text-slate-400 py-10">${t('noExpense')}</p>` : ''}
                         ${expenses.map(tx => {
                             const reqUser = state.users.find(u => u.uid === tx.requestedBy) || {};
                             return `
@@ -1032,31 +1218,31 @@
                                             <i class="ph ph-receipt"></i>
                                         </div>
                                         <div>
-                                            <p class="font-semibold text-sm">${tx.description || 'รายการเบิกจ่าย'}</p>
-                                            <p class="text-[10px] text-slate-400">โดย ${reqUser.nickname || 'User'}</p>
+                                            <p class="font-semibold text-sm">${tx.description || t('reimburse')}</p>
+                                            <p class="text-[10px] text-slate-400">by ${reqUser.nickname || 'User'}</p>
                                         </div>
                                     </div>
                                     <div class="text-right">
                                         <div class="font-bold text-sm text-slate-800 dark:text-white">฿${Number(tx.amount).toLocaleString()}</div>
-                                        <span class="inline-block mt-1 text-[9px] px-2 py-0.5 rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600 dark:bg-green-500/20':tx.status==='rejected'?'bg-red-100 text-red-600 dark:bg-red-500/20':'bg-orange-100 text-orange-600 dark:bg-orange-500/20'}">${tx.status==='approved'?'สำเร็จ':tx.status==='rejected'?'ถูกปฎิเสธ':'รอตรวจสอบ'}</span>
+                                        <span class="inline-block mt-1 text-[9px] px-2 py-0.5 rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600 dark:bg-green-500/20':tx.status==='rejected'?'bg-red-100 text-red-600 dark:bg-red-500/20':'bg-orange-100 text-orange-600 dark:bg-orange-500/20'}">${tx.status==='approved'?t('statusApproved'):tx.status==='rejected'?t('statusRejected'):t('statusPending')}</span>
                                     </div>
                                 </div>
                                 
                                 <div class="flex gap-2 justify-end items-center border-t border-slate-100 dark:border-slate-700/50 pt-3">
                                     ${tx.proofUrl ? `
                                         <button onclick="openProofModal('${tx.proofUrl}', '${tx.description}', '฿${Number(tx.amount).toLocaleString()}')" class="text-xs px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                                            <i class="ph ph-image"></i> ดูใบเสร็จ
+                                            <i class="ph ph-image"></i> ${t('viewReceipt')}
                                         </button>
                                     ` : ''}
                                     ${tx.status === 'approved' && tx.requestedBy === state.currentUser.uid && !tx.proofUrl ? `
                                         <input type="file" id="proofFile_${tx.id}" accept="image/*" class="hidden" onchange="uploadExpenseProof(event, '${tx.id}')">
                                         <label for="proofFile_${tx.id}" class="cursor-pointer text-xs px-3 py-1.5 rounded-full bg-green-50 text-green-600 dark:bg-green-500/20 font-medium flex items-center gap-1 hover:bg-green-100 dark:hover:bg-green-500/30 transition-colors">
-                                            <i class="ph ph-upload-simple"></i> อัปโหลดใบเสร็จ
+                                            <i class="ph ph-upload-simple"></i> ${t('uploadReceipt')}
                                         </label>
                                     ` : ''}
                                     ${(tx.status === 'pending' && tx.requestedBy === state.currentUser.uid) || state.currentUser.role === 'treasurer' ? `
                                         <button onclick="confirmDeleteTx('${tx.id}')" class="text-xs px-3 py-1.5 rounded-full bg-red-50 text-red-500 dark:bg-red-500/10 font-medium flex items-center gap-1 hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors">
-                                            <i class="ph ph-trash"></i> ลบรายการ
+                                            <i class="ph ph-trash"></i> ${t('deleteItem')}
                                         </button>
                                     ` : ''}
                                 </div>
@@ -1068,19 +1254,19 @@
                     <div id="expenseModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
                         <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-6 transition-transform max-w-[400px] border border-slate-100 dark:border-slate-700 mx-4">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-lg">ยื่นขอเบิกจ่าย</h3>
+                                <h3 class="font-bold text-lg">${t('claimReimburse')}</h3>
                                 <button onclick="document.getElementById('expenseModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
                             </div>
                             <form onsubmit="submitExpenseClaim(event)" class="space-y-4">
                                 <div>
-                                    <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">รายการ / ชื่องาน</label>
-                                    <input type="text" id="exp_reason" required placeholder="เช่น ค่าอุปกรณ์กิจกรรม" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
+                                    <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('itemTitle')}</label>
+                                    <input type="text" id="exp_reason" required placeholder="${t('itemPlaceholder')}" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
                                 </div>
                                 <div>
-                                    <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">จำนวนเงิน (บาท)</label>
+                                    <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('amountThb')}</label>
                                     <input type="number" id="exp_amount" required placeholder="0.00" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
                                 </div>
-                                <button type="submit" class="w-full py-4 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors mt-2 shadow-soft">ยืนยันการเบิก</button>
+                                <button type="submit" class="w-full py-4 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors mt-2 shadow-soft">${t('confirmClaim')}</button>
                             </form>
                         </div>
                     </div>
@@ -1093,17 +1279,17 @@
             return `
                 <div class="space-y-4 pb-20 max-w-2xl mx-auto">
                     <div class="flex justify-between items-center px-1 mb-2">
-                        <h2 class="font-bold text-xl text-slate-800 dark:text-white">รออนุมัติ</h2>
-                        <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold">${pendingTxs.length} รายการ</span>
+                        <h2 class="font-bold text-xl text-slate-800 dark:text-white">${t('pendingApprovals')}</h2>
+                        <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold">${pendingTxs.length}</span>
                     </div>
 
                     <div class="space-y-3">
-                        ${pendingTxs.length === 0 ? '<p class="text-center text-sm font-light text-slate-400 py-10">ไม่มีรายการรอตรวจสอบ</p>' : ''}
+                        ${pendingTxs.length === 0 ? `<p class="text-center text-sm font-light text-slate-400 py-10">${t('noPending')}</p>` : ''}
                         ${pendingTxs.map(tx => {
                             const reqUser = state.users.find(u => u.uid === (tx.requestedBy || tx.targetUser)) || {};
                             const isDep = tx.type === 'deposit';
                             const isRef = tx.type === 'refund';
-                            const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงิน' : (tx.description||'เบิกจ่าย')}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
+                            const proofAction = (tx.slipUrl || tx.proofUrl) ? `onclick="openProofModal('${tx.slipUrl || tx.proofUrl}', '${isDep ? t('deposit') : isRef ? t('refund') : (tx.description||t('reimburse'))}', '฿${Number(tx.amount).toLocaleString()}')"` : '';
                             
                             return `
                             <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl flex flex-col gap-3 shadow-card border border-slate-50 dark:border-slate-700/50">
@@ -1113,7 +1299,7 @@
                                             <i class="ph ${isDep ? 'ph-arrow-down-left' : isRef ? 'ph-hand-coins' : 'ph-arrow-up-right'}"></i>
                                         </div>
                                         <div>
-                                            <p class="font-semibold text-sm">${isDep ? 'ฝากเงิน' : isRef ? 'คืนเงินสมาชิก (' + (tx.description || '') + ')' : (tx.description || 'เบิกจ่าย')}</p>
+                                            <p class="font-semibold text-sm">${isDep ? t('deposit') : isRef ? t('refund') + ' (' + (tx.description || '') + ')' : (tx.description || t('reimburse'))}</p>
                                             <p class="text-[10px] text-slate-400">${reqUser.name} (${reqUser.nickname})</p>
                                         </div>
                                     </div>
@@ -1126,7 +1312,7 @@
                                     <div>
                                         ${(tx.slipUrl || tx.proofUrl) ? `
                                             <button ${proofAction} class="text-xs px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                                                <i class="ph ph-image"></i> ดูสลิป
+                                                <i class="ph ph-image"></i> ${t('viewSlip')}
                                             </button>
                                         ` : '<span></span>'}
                                     </div>
@@ -1150,8 +1336,8 @@
             return `
                 <div class="space-y-4 pb-20 max-w-2xl mx-auto">
                     <div class="flex justify-between items-center px-1 mb-2">
-                        <h2 class="font-bold text-xl text-slate-800 dark:text-white">จัดการสมาชิก</h2>
-                        <span class="px-3 py-1 bg-brand-pinkLight/30 text-brand-pinkDark rounded-full text-xs font-bold">${state.users.length} คน</span>
+                        <h2 class="font-bold text-xl text-slate-800 dark:text-white">${t('manageMembers')}</h2>
+                        <span class="px-3 py-1 bg-brand-pinkLight/30 text-brand-pinkDark rounded-full text-xs font-bold">${state.users.length}</span>
                     </div>
 
                     <div class="space-y-3">
@@ -1172,10 +1358,10 @@
                                     </button>
                                 </div>
                                 <div class="border-t border-slate-100 dark:border-slate-700/50 pt-3 flex items-center justify-between">
-                                    <span class="text-xs text-slate-500 font-medium">ระดับสิทธิ์การใช้งาน</span>
+                                    <span class="text-xs text-slate-500 font-medium">${t('userRole')}</span>
                                     <select onchange="changeUserRole('${u.uid}', this.value)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 outline-none text-slate-700 dark:text-slate-300 font-medium cursor-pointer">
-                                        <option value="member" ${u.role === 'member' ? 'selected' : ''}>สมาชิก (Member)</option>
-                                        <option value="treasurer" ${u.role === 'treasurer' ? 'selected' : ''}>เหรัญญิก (Treasurer)</option>
+                                        <option value="member" ${u.role === 'member' ? 'selected' : ''}>${t('memberRole')}</option>
+                                        <option value="treasurer" ${u.role === 'treasurer' ? 'selected' : ''}>${t('treasurerRole')}</option>
                                     </select>
                                 </div>
                             </div>
@@ -1200,18 +1386,18 @@
                     ${!isEditing ? `
                         <h2 class="font-bold text-xl">${state.currentUser.name} (${state.currentUser.nickname})</h2>
                         <p class="text-slate-400 text-sm font-mono mt-1">${state.currentUser.studentId}</p>
-                        <span class="mt-3 px-4 py-1.5 rounded-full bg-brand-pinkLight/30 text-brand-pinkDark text-xs font-bold uppercase tracking-wider">${state.currentUser.role === 'treasurer' ? 'เหรัญญิก (Treasurer)' : 'สมาชิก (Member)'}</span>
+                        <span class="mt-3 px-4 py-1.5 rounded-full bg-brand-pinkLight/30 text-brand-pinkDark text-xs font-bold uppercase tracking-wider">${state.currentUser.role === 'treasurer' ? t('treasurerRole') : t('memberRole')}</span>
                         
                         <div class="w-full mt-8 space-y-3 px-2">
                             <button onclick="toggleEditProfile()" class="w-full bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-card flex items-center justify-between text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border border-slate-50 dark:border-slate-700/50">
-                                <div class="flex items-center gap-3"><i class="ph ph-pencil-simple text-xl text-brand-pink"></i> แก้ไขข้อมูลส่วนตัว</div>
+                                <div class="flex items-center gap-3"><i class="ph ph-pencil-simple text-xl text-brand-pink"></i> ${t('editProfile')}</div>
                                 <i class="ph ph-caret-right text-slate-300"></i>
                             </button>
                             
                             <div class="w-full bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-card flex flex-col gap-5 border border-slate-50 dark:border-slate-700/50">
-                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">การแจ้งเตือนระบบ</h3>
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${t('systemNotif')}</h3>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-200"><i class="ph ph-bell text-lg text-slate-400"></i> รายการเงินเข้า/ออก</span>
+                                    <span class="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-200"><i class="ph ph-bell text-lg text-slate-400"></i> ${t('notifTx')}</span>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" ${state.prefs.notifyTransactions ? 'checked' : ''} onchange="toggleNotif('notifyTransactions')" class="sr-only peer">
                                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-brand-pink"></div>
@@ -1219,7 +1405,7 @@
                                 </div>
                                 ${state.currentUser.role === 'treasurer' ? `
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-200"><i class="ph ph-clipboard-text text-lg text-slate-400"></i> คำขอใหม่ (เหรัญญิก)</span>
+                                    <span class="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-200"><i class="ph ph-clipboard-text text-lg text-slate-400"></i> ${t('notifReq')}</span>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" ${state.prefs.notifyRequests ? 'checked' : ''} onchange="toggleNotif('notifyRequests')" class="sr-only peer">
                                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-brand-pink"></div>
@@ -1228,21 +1414,21 @@
                             </div>
 
                             <button onclick="logout()" class="w-full bg-red-50 dark:bg-red-500/10 text-red-500 p-4 rounded-2xl shadow-card flex items-center justify-center text-sm font-bold mt-4 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors">
-                                ออกจากระบบ
+                                ${t('logout')}
                             </button>
                         </div>
                         
                         <div class="w-full mt-6 space-y-3 px-2">
-                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">ประวัติโอนเงินเข้ากองกลาง กับได้รับเงินคืน</h3>
-                            ${myHist.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">ไม่มีประวัติ</p>' : myHist.map(tx => `
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">${t('financialHistory')}</h3>
+                            ${myHist.length === 0 ? `<p class="text-center text-xs text-slate-400 py-4">${t('noTx')}</p>` : myHist.map(tx => `
                                 <div class="bg-white dark:bg-slate-800 p-3 rounded-xl flex justify-between items-center shadow-sm border border-slate-50 dark:border-slate-700/50">
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-full ${tx.type === 'deposit' ? 'bg-green-50 text-green-500' : 'bg-purple-50 text-purple-500'} flex items-center justify-center shrink-0">
                                             <i class="ph ${tx.type === 'deposit' ? 'ph-arrow-down-left' : 'ph-hand-coins'}"></i>
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="font-medium text-xs truncate">${tx.type === 'deposit' ? 'โอนเงินเข้ากองกลาง' : 'ได้รับเงินคืน (' + (tx.description || '') + ')'}</p>
-                                            <span class="inline-block mt-0.5 text-[9px] px-1.5 py-[2px] rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600':tx.status==='rejected'?'bg-red-100 text-red-600':'bg-orange-100 text-orange-600'}">${tx.status==='approved'?'สำเร็จ':tx.status==='rejected'?'ถูกปฎิเสธ':'รอตรวจสอบ'}</span>
+                                            <p class="font-medium text-xs truncate">${tx.type === 'deposit' ? t('depositLabel') : t('refundLabel') + ' (' + (tx.description || '') + ')'}</p>
+                                            <span class="inline-block mt-0.5 text-[9px] px-1.5 py-[2px] rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600':tx.status==='rejected'?'bg-red-100 text-red-600':'bg-orange-100 text-orange-600'}">${tx.status==='approved'?t('statusApproved'):tx.status==='rejected'?t('statusRejected'):t('statusPending')}</span>
                                         </div>
                                     </div>
                                     <div class="font-bold text-sm ${tx.type === 'deposit' ? 'text-green-500' : 'text-purple-600 dark:text-purple-400'}">
@@ -1258,31 +1444,31 @@
                                 <label for="edit_pic" class="block w-full py-4 border-2 border-dashed border-brand-pinkLight rounded-2xl text-center cursor-pointer bg-brand-pink/5 hover:bg-brand-pink/10 transition-colors">
                                     <div id="edit_preview" class="text-brand-pinkDark flex flex-col items-center">
                                         <i class="ph ph-camera text-2xl mb-1"></i>
-                                        <span class="text-xs font-medium">เปลี่ยนรูปโปรไฟล์</span>
+                                        <span class="text-xs font-medium">${t('changePic')}</span>
                                     </div>
                                 </label>
                             </div>
                             
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">รหัสนักศึกษา (10 หลัก)</label>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('studentId10')}</label>
                                 <input type="text" id="edit_studentId" value="${state.currentUser.studentId}" pattern="\\d{10}" maxLength="10" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm font-mono">
                             </div>
 
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">ชื่อจริง</label>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('firstName')}</label>
                                 <input type="text" id="edit_name" value="${state.currentUser.name}" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
                             </div>
                             <div class="hidden">
                                 <input type="text" id="edit_surname" value="${state.currentUser.surname || ''}">
                             </div>
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">ชื่อเล่น</label>
+                                <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('nickname')}</label>
                                 <input type="text" id="edit_nickname" value="${state.currentUser.nickname}" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none text-slate-800 dark:text-white border border-slate-100 dark:border-slate-800 focus:ring-2 focus:ring-brand-pinkLight text-sm">
                             </div>
                             
                             <div class="flex gap-3 pt-4">
-                                <button type="button" onclick="toggleEditProfile()" class="flex-1 py-3.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 transition-colors border border-slate-200 dark:border-slate-600">ยกเลิก</button>
-                                <button type="submit" class="flex-1 py-3.5 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors shadow-soft">บันทึก</button>
+                                <button type="button" onclick="toggleEditProfile()" class="flex-1 py-3.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 transition-colors border border-slate-200 dark:border-slate-600">${t('cancel')}</button>
+                                <button type="submit" class="flex-1 py-3.5 rounded-full bg-brand-pink text-white font-bold hover:bg-brand-pinkDark transition-colors shadow-soft">${t('save')}</button>
                             </div>
                         </form>
                     `}
