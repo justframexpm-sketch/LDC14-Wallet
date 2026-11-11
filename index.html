@@ -543,6 +543,7 @@
                 const perm = await Notification.requestPermission();
                 if (perm !== 'granted') {
                     showToast('โปรดอนุญาตการแจ้งเตือนในเบราว์เซอร์', 'error');
+                    render(); // Revert visual switch
                     return;
                 }
             }
@@ -552,7 +553,7 @@
         }
 
         function handleTransactionChange(payload) {
-            if (!state.currentUser) return;
+            if (!state.currentUser) return; // ทำงานและส่งแจ้งเตือนเมื่อบัญชีมีการล็อกอินอยู่ที่อุปกรณ์นี้เท่านั้น
             
             const newTx = payload.new;
             const oldTx = payload.old;
@@ -672,15 +673,15 @@
 
         // --- Transaction Deletion Logic ---
         function confirmDeleteTx(txId) {
-            showConfirmModal('ยกเลิกคำขอ', 'คุณต้องการยกเลิกและลบคำขอนี้ใช่หรือไม่?', () => executeDeleteTx(txId), true);
+            showConfirmModal('ยืนยันการลบ', 'คุณต้องการลบรายการนี้ออกจากระบบใช่หรือไม่?', () => executeDeleteTx(txId), true);
         }
 
         async function executeDeleteTx(txId) {
             const { error } = await supabaseClient.from('transactions').delete().eq('id', txId);
             if (error) {
-                showToast("ยกเลิกคำขอไม่สำเร็จ: " + error.message, "error");
+                showToast("ลบรายการไม่สำเร็จ: " + error.message, "error");
             } else {
-                showToast("ยกเลิกคำขอเรียบร้อยแล้ว", "success");
+                showToast("ลบรายการเรียบร้อยแล้ว", "success");
             }
         }
 
@@ -724,14 +725,18 @@
         function triggerBiometrics() {
             if (state.users.length > 0) {
                 const targetUser = state.users[0];
-                if (targetUser.boundDeviceId && targetUser.boundDeviceId !== state.deviceId) {
-                    showToast(t('deviceBoundError'), 'error');
-                    return;
-                }
                 showToast("สแกน Touch ID / Face ID สำเร็จ!", "success");
                 state.currentUser = targetUser;
                 saveLocalSession();
                 loadPrefs(targetUser.uid);
+                
+                // ตรวจสอบและขอสิทธิ์แจ้งเตือนหากเคยตั้งค่าเปิดไว้
+                if (state.prefs && (state.prefs.notifyTransactions || state.prefs.notifyRequests)) {
+                    if (Notification.permission === 'default') {
+                        Notification.requestPermission();
+                    }
+                }
+                
                 render();
             } else {
                 showToast("ยังไม่มีผู้ใช้อยู่ในระบบ กรุณาลงทะเบียนก่อน", "error");
@@ -765,19 +770,17 @@
                     return;
                 }
 
-                if (existingUser.boundDeviceId && existingUser.boundDeviceId !== state.deviceId) {
-                    showToast(t('deviceBoundError'), 'error');
-                    return;
-                }
-
-                if (!existingUser.boundDeviceId) {
-                    existingUser.boundDeviceId = state.deviceId;
-                    await supabaseClient.from('users').update({ bound_device_id: state.deviceId }).eq('uid', existingUser.uid);
-                }
-
                 state.currentUser = existingUser;
                 saveLocalSession();
                 loadPrefs(existingUser.uid);
+                
+                // ตรวจสอบและขอสิทธิ์แจ้งเตือนอัตโนมัติเมื่อกดเข้าสู่ระบบ (หากเคยเปิดไว้)
+                if (state.prefs && (state.prefs.notifyTransactions || state.prefs.notifyRequests)) {
+                    if (Notification.permission === 'default') {
+                        Notification.requestPermission();
+                    }
+                }
+
                 showToast(t('success'));
                 render();
             } else {
@@ -790,7 +793,7 @@
                     uid: 'user_' + Date.now(),
                     email: emailInput,
                     studentId: pinInput,
-                    boundDeviceId: state.deviceId,
+                    boundDeviceId: state.deviceId, 
                     isSetup: false
                 };
                 saveLocalSession();
@@ -1122,7 +1125,7 @@
                 surname: document.getElementById('onb_surname').value,
                 nickname: document.getElementById('onb_nickname').value,
                 photo_url: uploadedImageTemp || '',
-                bound_device_id: state.deviceId,
+                bound_device_id: state.deviceId, 
                 role: isFirst ? 'treasurer' : 'member',
                 is_setup: true
             };
@@ -1559,11 +1562,14 @@
                         ` : `<div></div>`}
 
                         <div class="flex gap-1.5">
-                            <button onclick="updateTxStatus('${tx.id}', 'approved')" class="px-3 py-1 rounded-xl bg-emerald-500 text-white text-[10px] font-bold shadow-sm">
+                            <button onclick="updateTxStatus('${tx.id}', 'approved')" class="px-2.5 py-1 rounded-xl bg-emerald-500 text-white text-[10px] font-bold shadow-sm">
                                 <i class="fa-solid fa-check"></i> ${t('approve')}
                             </button>
-                            <button onclick="updateTxStatus('${tx.id}', 'rejected')" class="px-3 py-1 rounded-xl bg-rose-500 text-white text-[10px] font-bold shadow-sm">
+                            <button onclick="updateTxStatus('${tx.id}', 'rejected')" class="px-2.5 py-1 rounded-xl bg-slate-500 text-white text-[10px] font-bold shadow-sm">
                                 <i class="fa-solid fa-xmark"></i> ${t('reject')}
+                            </button>
+                            <button onclick="confirmDeleteTx('${tx.id}')" class="px-2.5 py-1 rounded-xl bg-rose-500 text-white text-[10px] font-bold shadow-sm">
+                                <i class="fa-solid fa-trash"></i> ลบ
                             </button>
                         </div>
                     </div>
@@ -1630,7 +1636,6 @@
                                         <p class="font-bold text-xs">${u.name} (${u.nickname})</p>
                                         <p class="text-[9px] text-slate-400 font-mono flex items-center gap-1">
                                             <span>${u.studentId}</span>
-                                            ${u.boundDeviceId ? `<span class="text-[8px] px-1 rounded bg-emerald-500/20 text-emerald-500 font-sans">ผูกเครื่องแล้ว</span>` : ''}
                                         </p>
                                     </div>
                                 </div>
@@ -1640,10 +1645,6 @@
                                         <option value="member" ${u.role === 'member' ? 'selected' : ''}>${t('member')}</option>
                                         <option value="treasurer" ${u.role === 'treasurer' ? 'selected' : ''}>${t('treasurer')}</option>
                                     </select>
-                                    
-                                    <button onclick="resetMemberDeviceBinding('${u.uid}')" class="w-7 h-7 rounded-xl bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 flex items-center justify-center transition-all" title="${t('resetDevice')}">
-                                        <i class="fa-solid fa-mobile-retro text-xs"></i>
-                                    </button>
 
                                     <button onclick="confirmDeleteUser('${u.uid}')" class="w-7 h-7 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 flex items-center justify-center transition-all" title="${t('deleteUser')}">
                                         <i class="fa-solid fa-trash-can text-xs"></i>
@@ -1734,15 +1735,6 @@
             }
 
             showToast(t('success'));
-        }
-
-        async function resetMemberDeviceBinding(uid) {
-            const { error } = await supabaseClient.from('users').update({ bound_device_id: null }).eq('uid', uid);
-            if (!error) {
-                showToast(`ปลดล็อกเครื่องเรียบร้อยแล้ว`);
-            } else {
-                showToast("ปลดล็อกไม่สำเร็จ: " + error.message, "error");
-            }
         }
 
         function confirmResetSystem() {
