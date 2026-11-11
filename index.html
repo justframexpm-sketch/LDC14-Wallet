@@ -924,7 +924,10 @@
                             <button onclick="document.getElementById('actionModal').classList.add('hidden')" class="text-slate-400 p-1 hover:text-slate-600 transition-colors"><i class="ph ph-x text-xl"></i></button>
                         </div>
                         <form onsubmit="submitDeposit(event)" class="space-y-4">
-                            <img src="image_14736d.jpg" class="w-full max-w-[200px] mx-auto rounded-2xl shadow-sm mb-4" alt="Thai QR Payment">
+                            <div class="w-full max-w-[200px] mx-auto p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800">
+                                <i class="ph ph-qr-code text-6xl text-brand-pinkDark mb-1"></i>
+                                <span class="text-[10px] text-slate-400">PromptPay QR</span>
+                            </div>
                             
                             <div>
                                 <label class="text-xs text-slate-500 mb-1 ml-2 block font-medium">${t('amountThb')}</label>
@@ -1431,8 +1434,15 @@
                                             <span class="inline-block mt-0.5 text-[9px] px-1.5 py-[2px] rounded-md font-medium ${tx.status==='approved'?'bg-green-100 text-green-600':tx.status==='rejected'?'bg-red-100 text-red-600':'bg-orange-100 text-orange-600'}">${tx.status==='approved'?t('statusApproved'):tx.status==='rejected'?t('statusRejected'):t('statusPending')}</span>
                                         </div>
                                     </div>
-                                    <div class="font-bold text-sm ${tx.type === 'deposit' ? 'text-green-500' : 'text-purple-600 dark:text-purple-400'}">
-                                        ${tx.type === 'deposit' ? '+' : '+'}฿${Number(tx.amount).toLocaleString()}
+                                    <div class="flex items-center gap-2">
+                                        <div class="font-bold text-sm ${tx.type === 'deposit' ? 'text-green-500' : 'text-purple-600 dark:text-purple-400'}">
+                                            ${tx.type === 'deposit' ? '+' : '+'}฿${Number(tx.amount).toLocaleString()}
+                                        </div>
+                                        ${(tx.status === 'pending' && tx.requestedBy === state.currentUser.uid) || state.currentUser.role === 'treasurer' ? `
+                                            <button onclick="confirmDeleteTx('${tx.id}')" title="${t('deleteItem')}" class="w-7 h-7 rounded-full bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
+                                        ` : ''}
                                     </div>
                                 </div>
                             `).join('')}
